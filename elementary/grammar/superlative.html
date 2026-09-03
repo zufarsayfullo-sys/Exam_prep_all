@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elementary Level - Superlative Forms Practice</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: #f4f6f8;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      background: #ffffff;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    h2 {
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+      line-height: 1.4;
+      color: #1a1a1a;
+    }
+
+    .sentences-list {
+      line-height: 2.2;
+      font-size: 1rem;
+      margin-bottom: 24px;
+    }
+
+    .sentence-item {
+      margin-bottom: 12px;
+    }
+
+    input[type="text"] {
+      border: none;
+      border-bottom: 2px solid #0088cc;
+      background: transparent;
+      outline: none;
+      padding: 2px 6px;
+      font-size: 0.95rem;
+      width: 140px;
+      text-align: center;
+    }
+
+    input[type="text"]:focus {
+      border-bottom-color: #005580;
+      background-color: #f0f8ff;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    .full-input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    .btn {
+      width: 100%;
+      background-color: #2aabee;
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background-color: #228be6;
+    }
+
+    .btn:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+
+    #quiz-screen, #result-screen {
+      display: none;
+    }
+
+    .status-msg {
+      margin-top: 15px;
+      text-align: center;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- STEP 1: REGISTRATION SCREEN -->
+  <div id="start-screen">
+    <h2>Welcome to Elementary Superlative Forms Practice</h2>
+    <div class="form-group">
+      <label for="studentName">Enter your full name to start:</label>
+      <input type="text" id="studentName" class="full-input" placeholder="e.g., John Doe">
+    </div>
+    <button class="btn" onclick="startQuiz()">Start Exercise</button>
+  </div>
+
+  <!-- STEP 2: QUIZ SCREEN -->
+  <div id="quiz-screen">
+    <h2>6. Complete the sentences with the SUPERLATIVE FORM of the word in (brackets).</h2>
+    
+    <div class="sentences-list" id="sentences-container">
+      <!-- Dynamic version content loads here -->
+    </div>
+
+    <button class="btn" id="submit-btn" onclick="submitAnswers()">Submit Answers</button>
+    <div id="status" class="status-msg"></div>
+  </div>
+
+  <!-- STEP 3: COMPLETION SCREEN -->
+  <div id="result-screen">
+    <h2>Thank You!</h2>
+    <p>Your answers have been submitted successfully.</p>
+  </div>
+
+</div>
+
+<script>
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbziYaus_lYw_yK7ju04NPgSaAV2viKzW9kFbXucI2hiRgJSs4tjuGaJhJa7Eh8x35U/exec";
+  const TASK_NAME = "Superlative Forms Exercise";
+
+  let currentStudent = "";
+  let selectedVersion = 0;
+
+  const versions = [
+    {
+      sentences: [
+        "1. February is [1] <i>(short)</i> month in a year.",
+        "2. This building is [2] <i>(high)</i> in the city.",
+        "3. What is [3] <i>(interesting)</i> book you have ever read?",
+        "4. Romeo and Juliette is [4] <i>(beautiful)</i> love story.",
+        "5. Tom is [5] <i>(lazy)</i> student in our class."
+      ],
+      answers: {
+        q1: ["the shortest", "shortest"],
+        q2: ["the highest", "highest"],
+        q3: ["the most interesting", "most interesting"],
+        q4: ["the most beautiful", "most beautiful"],
+        q5: ["the laziest", "laziest"]
+      }
+    },
+    {
+      sentences: [
+        "1. December is [1] <i>(cold)</i> month in a year.",
+        "2. That tower is [2] <i>(high)</i> in the city.",
+        "3. What is [3] <i>(exciting)</i> movie you have ever watched?",
+        "4. Titanic is [4] <i>(famous)</i> love story.",
+        "5. Sam is [5] <i>(friendly)</i> student in our class."
+      ],
+      answers: {
+        q1: ["the coldest", "coldest"],
+        q2: ["the highest", "highest"],
+        q3: ["the most exciting", "most exciting"],
+        q4: ["the most famous", "most famous"],
+        q5: ["the friendliest", "friendliest"]
+      }
+    },
+    {
+      sentences: [
+        "1. July is [1] <i>(hot)</i> month in a year.",
+        "2. This bridge is [2] <i>(long)</i> in the city.",
+        "3. What is [3] <i>(popular)</i> song you have ever heard?",
+        "4. Cinderella is [4] <i>(beautiful)</i> fairy tale.",
+        "5. Mark is [5] <i>(funny)</i> student in our class."
+      ],
+      answers: {
+        q1: ["the hottest", "hottest"],
+        q2: ["the longest", "longest"],
+        q3: ["the most popular", "most popular"],
+        q4: ["the most beautiful", "most beautiful"],
+        q5: ["the funniest", "funniest"]
+      }
+    },
+    {
+      sentences: [
+        "1. August is [1] <i>(sunny)</i> month in a year.",
+        "2. That mountain is [2] <i>(high)</i> in the country.",
+        "3. What is [3] <i>(expensive)</i> gift you have ever received?",
+        "4. The Nutcracker is [4] <i>(wonderful)</i> story.",
+        "5. Jack is [5] <i>(smart)</i> student in our class."
+      ],
+      answers: {
+        q1: ["the sunniest", "sunniest"],
+        q2: ["the highest", "highest"],
+        q3: ["the most expensive", "most expensive"],
+        q4: ["the most wonderful", "most wonderful"],
+        q5: ["the smartest", "smartest"]
+      }
+    },
+    {
+      sentences: [
+        "1. January is [1] <i>(quiet)</i> month in a year.",
+        "2. This hotel is [2] <i>(old)</i> in the city.",
+        "3. What is [3] <i>(important)</i> rule you have ever learned?",
+        "4. Beauty and the Beast is [4] <i>(romantic)</i> story.",
+        "5. Paul is [5] <i>(busy)</i> student in our class."
+      ],
+      answers: {
+        q1: ["the quietest", "quietest"],
+        q2: ["the oldest", "oldest"],
+        q3: ["the most important", "most important"],
+        q4: ["the most romantic", "most romantic"],
+        q5: ["the busiest", "busiest"]
+      }
+    }
+  ];
+
+  function startQuiz() {
+    const nameInput = document.getElementById("studentName").value.trim();
+    if (!nameInput) {
+      alert("Please enter your name.");
+      return;
+    }
+    currentStudent = nameInput;
+
+    selectedVersion = Math.floor(Math.random() * versions.length);
+    renderSentences(versions[selectedVersion]);
+
+    document.getElementById("start-screen").style.display = "none";
+    document.getElementById("quiz-screen").style.display = "block";
+  }
+
+  function renderSentences(versionData) {
+    const container = document.getElementById("sentences-container");
+    container.innerHTML = "";
+
+    versionData.sentences.forEach((sentence, index) => {
+      const qNum = index + 1;
+      let formatted = sentence.replace(`[${qNum}]`, `<input type="text" id="q${qNum}" autocomplete="off">`);
+
+      const sDiv = document.createElement("div");
+      sDiv.className = "sentence-item";
+      sDiv.innerHTML = formatted;
+      container.appendChild(sDiv);
+    });
+  }
+
+  function submitAnswers() {
+    const btn = document.getElementById("submit-btn");
+    const status = document.getElementById("status");
+    btn.disabled = true;
+    status.style.color = "#333";
+    status.innerText = "Submitting answers...";
+
+    let score = 0;
+    const total = 5;
+    const currentAnswers = versions[selectedVersion].answers;
+
+    for (let i = 1; i <= total; i++) {
+      let inputVal = document.getElementById("q" + i).value.trim().toLowerCase();
+      inputVal = inputVal.replace(/[`’‘]/g, "'");
+
+      if (currentAnswers["q" + i].includes(inputVal)) {
+        score++;
+      }
+    }
+
+    const percentage = Math.round((score / total) * 100);
+
+    const payload = {
+      name: currentStudent,
+      percentage: percentage,
+      taskName: TASK_NAME
+    };
+
+    fetch(SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    })
+    .then(() => {
+      document.getElementById("quiz-screen").style.display = "none";
+      document.getElementById("result-screen").style.display = "block";
+    })
+    .catch(err => {
+      console.error(err);
+      status.style.color = "red";
+      status.innerText = "Error sending results. Please try again.";
+      btn.disabled = false;
+    });
+  }
+</script>
+
+</body>
+</html>
