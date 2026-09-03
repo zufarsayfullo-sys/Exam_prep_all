@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Grammar — Elementary</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+  <style>
+    :root{--purple-dark:#26215C;--purple-main:#534AB7;--purple-light:#CECBF6;--purple-pale:#EEEDFE;--teal-main:#0F6E56;--teal-pale:#E1F5EE;--teal-light:#9FE1CB;--coral-main:#993C1D;--coral-pale:#FAECE7;--bg:#F0EEF8;--radius:14px;--radius-sm:10px;}
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+    html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);}
+    .page{height:100%;display:flex;flex-direction:column;overflow:hidden;}
+    .header{background:var(--purple-main);padding:12px 18px 20px;flex-shrink:0;}
+    .header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+    .back-btn{display:flex;align-items:center;gap:5px;color:var(--purple-light);font-size:13px;text-decoration:none;}
+    .back-btn i{font-size:16px;}
+    .level-pill{background:rgba(255,255,255,0.15);color:#fff;font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;}
+    .header-title{font-size:21px;font-weight:600;color:#fff;margin-bottom:4px;display:flex;align-items:center;gap:8px;}
+    .header-title i{font-size:22px;color:var(--purple-light);}
+    .header-sub{font-size:12px;color:var(--purple-light);}
+    .stats-strip{display:flex;gap:10px;margin-top:14px;}
+    .stat-pill{background:rgba(255,255,255,0.15);border-radius:20px;padding:5px 13px;display:flex;align-items:center;gap:5px;font-size:12px;color:#fff;}
+    .stat-pill i{font-size:14px;color:var(--purple-light);}
+    .scroll{flex:1;overflow-y:auto;padding:20px 16px 30px;-webkit-overflow-scrolling:touch;}
+    .scroll::-webkit-scrollbar{width:0;}
+    .section-label{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:12px;}
+    .quiz-list{display:flex;flex-direction:column;gap:8px;}
+    .quiz-card{background:#fff;border-radius:var(--radius);border:0.5px solid #E0DEFA;padding:14px 16px;display:flex;align-items:center;gap:14px;text-decoration:none;transition:transform 0.15s;}
+    .quiz-card:active{transform:scale(0.98);}
+    .quiz-num{width:40px;height:40px;border-radius:10px;background:var(--purple-pale);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--purple-main);flex-shrink:0;}
+    .quiz-info{flex:1;}
+    .quiz-name{font-size:14px;font-weight:600;color:var(--purple-dark);margin-bottom:3px;}
+    .quiz-sub{font-size:12px;color:#888;}
+    .quiz-arrow i{font-size:18px;color:#ccc;}
+  </style>
+</head>
+<body>
+<div class="page">
+  <div class="header">
+    <div class="header-top">
+      <a class="back-btn" href="../index.html"><i class="ti ti-arrow-left"></i> Elementary</a>
+      <div class="level-pill">A2 · Grammar</div>
+    </div>
+    <div class="header-title"><i class="ti ti-pencil-check"></i> Grammar</div>
+    <div class="header-sub">Choose a topic to practise</div>
+    <div class="stats-strip">
+      <div class="stat-pill"><i class="ti ti-list-check"></i> 9 topics</div>
+      <div class="stat-pill"><i class="ti ti-tournament"></i> Classroom quiz ready</div>
+    </div>
+  </div>
+
+  <div class="scroll">
+    <div class="section-label">All topics</div>
+    <div class="quiz-list">
+
+      <a class="quiz-card" href="./comparative.html">
+        <div class="quiz-num">1</div>
+        <div class="quiz-info">
+          <div class="quiz-name">Comparative adjectives</div>
+          <div class="quiz-sub">bigger, more expensive, better than…</div>
+        </div>
+        <div class="quiz-arrow"><i class="ti ti-chevron-right"></i></div>
+      </a>
+
+      <a class="quiz-card" href="./going_to.html">
+        <div class="quiz-num">2</div>
+        <div class="quiz-info">
+          <div class="quiz-name">Going to</div>
+          <div class="quiz-sub">Plans and intentions for the future</div>
+        </div>
+        <div class="quiz-arrow"><i class="ti ti-chevron-right"></i></div>
+      </a>
+
+      <a class="quiz-card" href="./modals.html">
+        <div class="quiz-num">3</div>
+        <div class="quiz-info">
+          <div class="quiz-name">Modal verbs</div>
+          <div class="quiz-sub">can, could, should, must, have to…</div>
+        </div>
+        <div class="quiz-arrow"><i class="ti ti-chevron-right"></i></div>
+      </a>
+
+      <a class="quiz-card" href="./past_simple_neg.html">
+        <div class="quiz-num">4</div>
+        <div class="quiz-info">
+          <div class="quiz-name">Past Simple — Negative</div>
+          <div class="quiz-sub">didn't + verb, wasn't, weren't…</div>
+        </div>
+        <div class="quiz-arrow"><i class="ti ti-chevron-right"></i></div>
+      </a>
+
+      <a class="quiz-card" href="./past_simple_wh.html">
+        <div class="quiz-num">5</div>
+        <div class="quiz-info">
+          <div class="quiz-name">Past Simple — Wh- questions</div>
+          <div class="quiz-sub">What did you…? Where did she…?</div>
+        </div>
+        <div class="quiz-arrow"><i class="ti ti-chevron-right"></i></div>
+      </a>
+
+      <a class="quiz-card" href="./present_per">
+        <div class="quiz-num">6</div>
+        <div class="quiz-info">
+          <div class="quiz-name">Present Perfect</div>
+          <div class="quiz-sub">have/has + past participle</div>
+        </div>
+        <div class="quiz-arrow"><i class="ti ti-chevron-right"></i></div>
+      </a>
+
+      <a class="quiz-card" href="./present_per_vs_past">
+        <div class="quiz-num">7</div>
+        <div class="quiz-info">
+          <div class="quiz-name">Present Perfect vs Past Simple</div>
+          <div class="quiz-sub">I've seen vs I saw — choosing the right tense</div>
+        </div>
+        <div class="quiz-arrow"><i class="ti ti-chevron-right"></i></div>
+      </a>
+
+      <a class="quiz-card" href="./some_any.html">
+        <div class="quiz-num">8</div>
+        <div class="quiz-info">
+          <div class="quiz-name">Some / Any</div>
+          <div class="quiz-sub">some, any, no — countable and uncountable</div>
+        </div>
+        <div class="quiz-arrow"><i class="ti ti-chevron-right"></i></div>
+      </a>
+
+      <a class="quiz-card" href="./superlative.html">
+        <div class="quiz-num">9</div>
+        <div class="quiz-info">
+          <div class="quiz-name">Superlative adjectives</div>
+          <div class="quiz-sub">the biggest, the most beautiful, the best…</div>
+        </div>
+        <div class="quiz-arrow"><i class="ti ti-chevron-right"></i></div>
+      </a>
+
+    </div>
+  </div>
+</div>
+<script>
+  const tg=window.Telegram?.WebApp;
+  tg?.ready();tg?.expand();
+</script>
+</body>
+</html>
