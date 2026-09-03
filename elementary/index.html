@@ -1,1 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Elementary — ExamPrep</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+  <style>
+    :root{--teal-dark:#04342C;--teal-main:#0F6E56;--teal-mid:#1D9E75;--teal-light:#9FE1CB;--teal-pale:#E1F5EE;--purple-dark:#26215C;--purple-main:#534AB7;--purple-light:#CECBF6;--purple-pale:#EEEDFE;--coral-main:#993C1D;--coral-pale:#FAECE7;--amber-main:#854F0B;--amber-pale:#FAEEDA;--blue-main:#185FA5;--blue-pale:#E6F1FB;--bg:#F0EEF8;--radius:14px;--radius-sm:10px;}
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+    html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);}
+    .page{height:100%;display:flex;flex-direction:column;overflow:hidden;}
 
+    /* HEADER */
+    .header{background:var(--teal-main);padding:12px 18px 20px;flex-shrink:0;}
+    .header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+    .back-btn{display:flex;align-items:center;gap:5px;color:var(--teal-light);font-size:13px;text-decoration:none;}
+    .back-btn i{font-size:16px;}
+    .level-pill{background:rgba(255,255,255,0.15);color:#fff;font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;}
+    .header-title{font-size:21px;font-weight:600;color:#fff;margin-bottom:4px;}
+    .header-sub{font-size:12px;color:var(--teal-light);}
+    .stats-strip{display:flex;gap:10px;margin-top:14px;}
+    .stat-pill{background:rgba(255,255,255,0.15);border-radius:20px;padding:5px 13px;display:flex;align-items:center;gap:5px;font-size:12px;color:#fff;}
+    .stat-pill i{font-size:14px;color:var(--teal-light);}
+
+    /* SCROLL */
+    .scroll{flex:1;overflow-y:auto;padding:20px 16px 30px;-webkit-overflow-scrolling:touch;}
+    .scroll::-webkit-scrollbar{width:0;}
+    .section-label{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:12px;}
+
+    /* SKILL CARDS */
+    .skills-grid{display:flex;flex-direction:column;gap:10px;margin-bottom:24px;}
+    .skill-card{background:#fff;border-radius:var(--radius);border:0.5px solid #E0DEFA;padding:16px;display:flex;align-items:center;gap:14px;text-decoration:none;transition:transform 0.15s;}
+    .skill-card:active{transform:scale(0.98);}
+    .skill-card.locked{opacity:0.45;cursor:default;}
+    .skill-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .skill-icon i{font-size:24px;}
+    .skill-info{flex:1;}
+    .skill-name{font-size:15px;font-weight:600;color:var(--purple-dark);margin-bottom:3px;}
+    .skill-sub{font-size:12px;color:#888;}
+    .skill-meta{display:flex;align-items:center;gap:6px;margin-top:5px;}
+    .skill-tag{font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;}
+    .skill-arrow i{font-size:18px;color:#ccc;}
+    .skill-lock i{font-size:16px;color:#ddd;}
+
+    /* PROGRESS BAR */
+    .prog-wrap{margin-top:6px;}
+    .prog-track{height:4px;background:#f0f0f0;border-radius:2px;overflow:hidden;}
+    .prog-fill{height:100%;border-radius:2px;transition:width 0.4s;}
+
+    /* FOOTER */
+    .footer-note{text-align:center;font-size:12px;color:#aaa;line-height:1.6;padding-top:4px;}
+    .footer-note i{font-size:14px;vertical-align:-2px;margin-right:4px;}
+  </style>
+</head>
+<body>
+<div class="page">
+  <div class="header">
+    <div class="header-top">
+      <a class="back-btn" href="../index.html"><i class="ti ti-arrow-left"></i> All levels</a>
+      <div class="level-pill">A2 · Elementary</div>
+    </div>
+    <div class="header-title">Elementary</div>
+    <div class="header-sub">Practice grammar, vocabulary and writing skills</div>
+    <div class="stats-strip">
+      <div class="stat-pill"><i class="ti ti-books"></i> 3 skills</div>
+      <div class="stat-pill"><i class="ti ti-pencil-check"></i> Quizzes available</div>
+    </div>
+  </div>
+
+  <div class="scroll">
+    <div class="section-label">Skills</div>
+    <div class="skills-grid">
+
+      <!-- GRAMMAR -->
+      <a class="skill-card" href="./grammar/index.html">
+        <div class="skill-icon" style="background:#EEEDFE;">
+          <i class="ti ti-pencil-check" style="color:#534AB7;"></i>
+        </div>
+        <div class="skill-info">
+          <div class="skill-name">Grammar</div>
+          <div class="skill-sub">Tenses, structures and rules</div>
+          <div class="skill-meta">
+            <span class="skill-tag" style="background:#EEEDFE;color:#534AB7;">Multiple choice</span>
+            <span class="skill-tag" style="background:#EEEDFE;color:#534AB7;">Gap fill</span>
+          </div>
+        </div>
+        <div class="skill-arrow"><i class="ti ti-chevron-right"></i></div>
+      </a>
+
+      <!-- VOCABULARY -->
+      <a class="skill-card" href="./vocabulary/index.html">
+        <div class="skill-icon" style="background:var(--teal-pale);">
+          <i class="ti ti-cards" style="color:var(--teal-main);"></i>
+        </div>
+        <div class="skill-info">
+          <div class="skill-name">Vocabulary</div>
+          <div class="skill-sub">Words, phrases and expressions</div>
+          <div class="skill-meta">
+            <span class="skill-tag" style="background:var(--teal-pale);color:var(--teal-main);">Gap fill</span>
+            <span class="skill-tag" style="background:var(--teal-pale);color:var(--teal-main);">Word bank</span>
+          </div>
+        </div>
+        <div class="skill-arrow"><i class="ti ti-chevron-right"></i></div>
+      </a>
+
+      <!-- WRITING -->
+      <a class="skill-card" href="./writing/index.html">
+        <div class="skill-icon" style="background:var(--blue-pale);">
+          <i class="ti ti-writing" style="color:var(--blue-main);"></i>
+        </div>
+        <div class="skill-info">
+          <div class="skill-name">Writing</div>
+          <div class="skill-sub">Sentences, paragraphs and tasks</div>
+          <div class="skill-meta">
+            <span class="skill-tag" style="background:var(--blue-pale);color:var(--blue-main);">Rewrite</span>
+            <span class="skill-tag" style="background:var(--blue-pale);color:var(--blue-main);">Word order</span>
+          </div>
+        </div>
+        <div class="skill-arrow"><i class="ti ti-chevron-right"></i></div>
+      </a>
+
+    </div>
+    <div class="footer-note">
+      <i class="ti ti-info-circle"></i>
+      More skills coming soon
+    </div>
+  </div>
+</div>
+<script>
+  const tg=window.Telegram?.WebApp;
+  tg?.ready();tg?.expand();
+</script>
+</body>
+</html>
