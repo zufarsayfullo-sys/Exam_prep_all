@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elementary Level - Be Going To Practice</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: #f4f6f8;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      background: #ffffff;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    h2 {
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+      line-height: 1.4;
+      color: #1a1a1a;
+    }
+
+    .dialogue-container {
+      line-height: 2.2;
+      font-size: 1rem;
+      margin-bottom: 24px;
+      background-color: #fcfcfc;
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid #eef2f5;
+    }
+
+    .dialogue-line {
+      margin-bottom: 12px;
+    }
+
+    .speaker {
+      font-weight: bold;
+      color: #0088cc;
+    }
+
+    input[type="text"] {
+      border: none;
+      border-bottom: 2px solid #0088cc;
+      background: transparent;
+      outline: none;
+      padding: 2px 6px;
+      font-size: 0.95rem;
+      width: 120px;
+      text-align: center;
+    }
+
+    input[type="text"].short-input {
+      width: 60px;
+    }
+
+    input[type="text"]:focus {
+      border-bottom-color: #005580;
+      background-color: #f0f8ff;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    .full-input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    .btn {
+      width: 100%;
+      background-color: #2aabee;
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background-color: #228be6;
+    }
+
+    .btn:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+
+    #quiz-screen, #result-screen {
+      display: none;
+    }
+
+    .status-msg {
+      margin-top: 15px;
+      text-align: center;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- STEP 1: REGISTRATION SCREEN -->
+  <div id="start-screen">
+    <h2>Welcome to Elementary 'Be Going To' Practice</h2>
+    <div class="form-group">
+      <label for="studentName">Enter your full name to start:</label>
+      <input type="text" id="studentName" class="full-input" placeholder="e.g., John Doe">
+    </div>
+    <button class="btn" onclick="startQuiz()">Start Exercise</button>
+  </div>
+
+  <!-- STEP 2: QUIZ SCREEN -->
+  <div id="quiz-screen">
+    <h2>7. Complete the conversation with the correct form of <i>going to</i> (Use negative form if necessary).</h2>
+    
+    <div class="dialogue-container" id="dialogue-content">
+      <!-- Dynamic version content loads here -->
+    </div>
+
+    <button class="btn" id="submit-btn" onclick="submitAnswers()">Submit Answers</button>
+    <div id="status" class="status-msg"></div>
+  </div>
+
+  <!-- STEP 3: COMPLETION SCREEN -->
+  <div id="result-screen">
+    <h2>Thank You!</h2>
+    <p>Your answers have been submitted successfully.</p>
+  </div>
+
+</div>
+
+<script>
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbziYaus_lYw_yK7ju04NPgSaAV2viKzW9kFbXucI2hiRgJSs4tjuGaJhJa7Eh8x35U/exec";
+  const TASK_NAME = "Going To Conversation Exercise";
+
+  let currentStudent = "";
+  let selectedVersion = 0;
+
+  const versions = [
+    {
+      lines: [
+        { speaker: "Sandy", text: "Hello Valeria, what <input type='text' id='q1a' class='short-input' autocomplete='off'> you <input type='text' id='q1b' autocomplete='off'> do tonight?" },
+        { speaker: "Valeria", text: "Well, I <input type='text' id='q2' autocomplete='off'> watch an interesting film at the cinema. And you?" },
+        { speaker: "Sandy", text: "My friend Tobby and I <input type='text' id='q3' autocomplete='off'> stay at home. I think we <input type='text' id='q4' autocomplete='off'> visit our friends." },
+        { speaker: "Valeria", text: "<input type='text' id='q5a' class='short-input' autocomplete='off'> you <input type='text' id='q5b' autocomplete='off'> drive or take the bus?" },
+        { speaker: "Sandy", text: "The car is quicker and Toby doesn’t like buses!" },
+        { speaker: "Valeria", text: "Well, have a good time!" }
+      ]
+    },
+    {
+      lines: [
+        { speaker: "Sandy", text: "Hello Valeria, what <input type='text' id='q1a' class='short-input' autocomplete='off'> you <input type='text' id='q1b' autocomplete='off'> do this weekend?" },
+        { speaker: "Valeria", text: "Well, I <input type='text' id='q2' autocomplete='off'> listen to music at a concert. And you?" },
+        { speaker: "Sandy", text: "My friend Tobby and I <input type='text' id='q3' autocomplete='off'> stay at home. I think we <input type='text' id='q4' autocomplete='off'> visit a museum." },
+        { speaker: "Valeria", text: "<input type='text' id='q5a' class='short-input' autocomplete='off'> you <input type='text' id='q5b' autocomplete='off'> drive or take the bus?" },
+        { speaker: "Sandy", text: "The car is quicker and Toby doesn’t like buses!" },
+        { speaker: "Valeria", text: "Well, have a good time!" }
+      ]
+    },
+    {
+      lines: [
+        { speaker: "Sandy", text: "Hello Valeria, what <input type='text' id='q1a' class='short-input' autocomplete='off'> you <input type='text' id='q1b' autocomplete='off'> do tomorrow?" },
+        { speaker: "Valeria", text: "Well, I <input type='text' id='q2' autocomplete='off'> watch a football match at the stadium. And you?" },
+        { speaker: "Sandy", text: "My friend Tobby and I <input type='text' id='q3' autocomplete='off'> stay at home. I think we <input type='text' id='q4' autocomplete='off'> walk in the park." },
+        { speaker: "Valeria", text: "<input type='text' id='q5a' class='short-input' autocomplete='off'> you <input type='text' id='q5b' autocomplete='off'> drive or take the bus?" },
+        { speaker: "Sandy", text: "The car is quicker and Toby doesn’t like buses!" },
+        { speaker: "Valeria", text: "Well, have a good time!" }
+      ]
+    },
+    {
+      lines: [
+        { speaker: "Sandy", text: "Hello Valeria, what <input type='text' id='q1a' class='short-input' autocomplete='off'> you <input type='text' id='q1b' autocomplete='off'> do on Sunday?" },
+        { speaker: "Valeria", text: "Well, I <input type='text' id='q2' autocomplete='off'> try a new restaurant in town. And you?" },
+        { speaker: "Sandy", text: "My friend Tobby and I <input type='text' id='q3' autocomplete='off'> stay at home. I think we <input type='text' id='q4' autocomplete='off'> go to a cafe." },
+        { speaker: "Valeria", text: "<input type='text' id='q5a' class='short-input' autocomplete='off'> you <input type='text' id='q5b' autocomplete='off'> drive or take the bus?" },
+        { speaker: "Sandy", text: "The car is quicker and Toby doesn’t like buses!" },
+        { speaker: "Valeria", text: "Well, have a good time!" }
+      ]
+    },
+    {
+      lines: [
+        { speaker: "Sandy", text: "Hello Valeria, what <input type='text' id='q1a' class='short-input' autocomplete='off'> you <input type='text' id='q1b' autocomplete='off'> do on Friday night?" },
+        { speaker: "Valeria", text: "Well, I <input type='text' id='q2' autocomplete='off'> see a new movie at the theater. And you?" },
+        { speaker: "Sandy", text: "My friend Tobby and I <input type='text' id='q3' autocomplete='off'> stay at home. I think we <input type='text' id='q4' autocomplete='off'> go to the shopping center." },
+        { speaker: "Valeria", text: "<input type='text' id='q5a' class='short-input' autocomplete='off'> you <input type='text' id='q5b' autocomplete='off'> drive or take the bus?" },
+        { speaker: "Sandy", text: "The car is quicker and Toby doesn’t like buses!" },
+        { speaker: "Valeria", text: "Well, have a good time!" }
+      ]
+    }
+  ];
+
+  const targetAnswers = {
+    q1a: ["are"],
+    q1b: ["going to"],
+    q2: ["'m going to", "am going to", "going to"],
+    q3: ["aren't going to", "are not going to"],
+    q4: ["are going to", "'re going to"],
+    q5a: ["are"],
+    q5b: ["going to"]
+  };
+
+  function startQuiz() {
+    const nameInput = document.getElementById("studentName").value.trim();
+    if (!nameInput) {
+      alert("Please enter your name.");
+      return;
+    }
+    currentStudent = nameInput;
+
+    selectedVersion = Math.floor(Math.random() * versions.length);
+    renderDialogue(versions[selectedVersion]);
+
+    document.getElementById("start-screen").style.display = "none";
+    document.getElementById("quiz-screen").style.display = "block";
+  }
+
+  function renderDialogue(versionData) {
+    const container = document.getElementById("dialogue-content");
+    container.innerHTML = "";
+
+    versionData.lines.forEach(line => {
+      const dDiv = document.createElement("div");
+      dDiv.className = "dialogue-line";
+      dDiv.innerHTML = `<span class="speaker">${line.speaker}:</span> ${line.text}`;
+      container.appendChild(dDiv);
+    });
+  }
+
+  function submitAnswers() {
+    const btn = document.getElementById("submit-btn");
+    const status = document.getElementById("status");
+    btn.disabled = true;
+    status.style.color = "#333";
+    status.innerText = "Submitting answers...";
+
+    let score = 0;
+    const total = 5; // 5 numbered items in original image
+
+    const q1a = document.getElementById("q1a").value.trim().toLowerCase();
+    const q1b = document.getElementById("q1b").value.trim().toLowerCase();
+    if (targetAnswers.q1a.includes(q1a) && targetAnswers.q1b.includes(q1b)) score++;
+
+    let q2 = document.getElementById("q2").value.trim().toLowerCase().replace(/[`’‘]/g, "'");
+    if (targetAnswers.q2.includes(q2)) score++;
+
+    let q3 = document.getElementById("q3").value.trim().toLowerCase().replace(/[`’‘]/g, "'");
+    if (targetAnswers.q3.includes(q3)) score++;
+
+    let q4 = document.getElementById("q4").value.trim().toLowerCase().replace(/[`’‘]/g, "'");
+    if (targetAnswers.q4.includes(q4)) score++;
+
+    const q5a = document.getElementById("q5a").value.trim().toLowerCase();
+    const q5b = document.getElementById("q5b").value.trim().toLowerCase();
+    if (targetAnswers.q5a.includes(q5a) && targetAnswers.q5b.includes(q5b)) score++;
+
+    const percentage = Math.round((score / total) * 100);
+
+    const payload = {
+      name: currentStudent,
+      percentage: percentage,
+      taskName: TASK_NAME
+    };
+
+    fetch(SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    })
+    .then(() => {
+      document.getElementById("quiz-screen").style.display = "none";
+      document.getElementById("result-screen").style.display = "block";
+    })
+    .catch(err => {
+      console.error(err);
+      status.style.color = "red";
+      status.innerText = "Error sending results. Please try again.";
+      btn.disabled = false;
+    });
+  }
+</script>
+
+</body>
+</html>
