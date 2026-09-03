@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elementary Level - Present Perfect vs Past Simple Practice</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: #f4f6f8;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 650px;
+      background: #ffffff;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    h2 {
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+      line-height: 1.4;
+      color: #1a1a1a;
+    }
+
+    .dialogue-section {
+      margin-bottom: 20px;
+      background-color: #fcfcfc;
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid #eef2f5;
+    }
+
+    .dialogue-number {
+      font-weight: bold;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+    }
+
+    .dialogue-line {
+      line-height: 2.2;
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+
+    .speaker {
+      font-weight: bold;
+      color: #0088cc;
+    }
+
+    input[type="text"] {
+      border: none;
+      border-bottom: 2px solid #0088cc;
+      background: transparent;
+      outline: none;
+      padding: 2px 6px;
+      font-size: 0.95rem;
+      width: 170px;
+      text-align: center;
+    }
+
+    input[type="text"]:focus {
+      border-bottom-color: #005580;
+      background-color: #f0f8ff;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    .full-input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    .btn {
+      width: 100%;
+      background-color: #2aabee;
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background-color: #228be6;
+    }
+
+    .btn:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+
+    #quiz-screen, #result-screen {
+      display: none;
+    }
+
+    .status-msg {
+      margin-top: 15px;
+      text-align: center;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- STEP 1: REGISTRATION SCREEN -->
+  <div id="start-screen">
+    <h2>Welcome to Present Perfect vs Past Simple Practice</h2>
+    <div class="form-group">
+      <label for="studentName">Enter your full name to start:</label>
+      <input type="text" id="studentName" class="full-input" placeholder="e.g., John Doe">
+    </div>
+    <button class="btn" onclick="startQuiz()">Start Exercise</button>
+  </div>
+
+  <!-- STEP 2: QUIZ SCREEN -->
+  <div id="quiz-screen">
+    <h2>8. Complete the conversations with the PRESENT PERFECT or the PAST SIMPLE form of the words in (brackets).</h2>
+    
+    <div id="dialogues-container">
+      <!-- Dynamic version content loads here -->
+    </div>
+
+    <button class="btn" id="submit-btn" onclick="submitAnswers()">Submit Answers</button>
+    <div id="status" class="status-msg"></div>
+  </div>
+
+  <!-- STEP 3: COMPLETION SCREEN -->
+  <div id="result-screen">
+    <h2>Thank You!</h2>
+    <p>Your answers have been submitted successfully.</p>
+  </div>
+
+</div>
+
+<script>
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbziYaus_lYw_yK7ju04NPgSaAV2viKzW9kFbXucI2hiRgJSs4tjuGaJhJa7Eh8x35U/exec";
+  const TASK_NAME = "Present Perfect vs Past Simple Exercise";
+
+  let currentStudent = "";
+  let selectedVersion = 0;
+
+  const versions = [
+    {
+      answers: {
+        q1: ["have you ever visited", "have you visited"],
+        q2: ["i went to", "i went"],
+        q3: ["have you heard"],
+        q4: ["happened", "has happened"],
+        q5: ["she passed"]
+      },
+      content: `
+        <div class="dialogue-section">
+          <div class="dialogue-number">1</div>
+          <div class="dialogue-line"><span class="speaker">A:</span> <input type="text" id="q1" autocomplete="off"> <i>(you / ever / visit)</i> a music festival?</div>
+          <div class="dialogue-line"><span class="speaker">B:</span> Yes, I have. <input type="text" id="q2" autocomplete="off"> <i>(I / go)</i> Sydney last year and there was an international music festival.</div>
+        </div>
+        <div class="dialogue-section">
+          <div class="dialogue-number">2</div>
+          <div class="dialogue-line"><span class="speaker">A:</span> <input type="text" id="q3" autocomplete="off"> <i>(you / hear)</i> the news about Rosa?</div>
+          <div class="dialogue-line"><span class="speaker">B:</span> No, what <input type="text" id="q4" autocomplete="off"> <i>(happen)</i> this time?</div>
+          <div class="dialogue-line"><span class="speaker">A:</span> Well, yesterday <input type="text" id="q5" autocomplete="off"> <i>(she / pass)</i> her exams with excellent marks.</div>
+        </div>
+      `
+    },
+    {
+      answers: {
+        q1: ["have you ever visited", "have you visited"],
+        q2: ["i went to", "i went"],
+        q3: ["have you heard"],
+        q4: ["happened", "has happened"],
+        q5: ["he found"]
+      },
+      content: `
+        <div class="dialogue-section">
+          <div class="dialogue-number">1</div>
+          <div class="dialogue-line"><span class="speaker">A:</span> <input type="text" id="q1" autocomplete="off"> <i>(you / ever / visit)</i> an art exhibition?</div>
+          <div class="dialogue-line"><span class="speaker">B:</span> Yes, I have. <input type="text" id="q2" autocomplete="off"> <i>(I / go)</i> Paris last year and there was a famous art exhibition.</div>
+        </div>
+        <div class="dialogue-section">
+          <div class="dialogue-number">2</div>
+          <div class="dialogue-line"><span class="speaker">A:</span> <input type="text" id="q3" autocomplete="off"> <i>(you / hear)</i> the news about Alex?</div>
+          <div class="dialogue-line"><span class="speaker">B:</span> No, what <input type="text" id="q4" autocomplete="off"> <i>(happen)</i> this time?</div>
+          <div class="dialogue-line"><span class="speaker">A:</span> Well, yesterday <input type="text" id="q5" autocomplete="off"> <i>(he / find)</i> a new job at a great company.</div>
+        </div>
+      `
+    },
+    {
+      answers: {
+        q1: ["have you ever visited", "have you visited"],
+        q2: ["i went to", "i went"],
+        q3: ["have you heard"],
+        q4: ["happened", "has happened"],
+        q5: ["she won"]
+      },
+      content: `
+        <div class="dialogue-section">
+          <div class="dialogue-number">1</div>
+          <div class="dialogue-line"><span class="speaker">A:</span> <input type="text" id="q1" autocomplete="off"> <i>(you / ever / visit)</i> a food festival?</div>
+          <div class="dialogue-line"><span class="speaker">B:</span> Yes, I have. <input type="text" id="q2" autocomplete="off"> <i>(I / go)</i> Rome last year and there was a huge food festival.</div>
+        </div>
+        <div class="dialogue-section">
+          <div class="dialogue-number">2</div>
+          <div class="dialogue-line"><span class="speaker">A:</span> <input type="text" id="q3" autocomplete="off"> <i>(you / hear)</i> the news about Elena?</div>
+          <div class="dialogue-line"><span class="speaker">B:</span> No, what <input type="text" id="q4" autocomplete="off"> <i>(happen)</i> this time?</div>
+          <div class="dialogue-line"><span class="speaker">A:</span> Well, yesterday <input type="text" id="q5" autocomplete="off"> <i>(she / win)</i> the sports competition.</div>
+        </div>
+      `
+    },
+    {
+      answers: {
+        q1: ["have you ever visited", "have you visited"],
+        q2: ["i went to", "i went"],
+        q3: ["have you heard"],
+        q4: ["happened", "has happened"],
+        q5: ["he bought"]
+      },
+      content: `
+        <div class="dialogue-section">
+          <div class="dialogue-number">1</div>
+          <div class="dialogue-line"><span class="speaker">A:</span> <input type="text" id="q1" autocomplete="off"> <i>(you / ever / visit)</i> a film festival?</div>
+          <div class="dialogue-line"><span class="speaker">B:</span> Yes, I have. <input type="text" id="q2" autocomplete="off"> <i>(I / go)</i> London last year and there was an exciting film festival.</div>
+        </div>
+        <div class="dialogue-section">
+          <div class="dialogue-number">2</div>
+          <div class="dialogue-line"><span class="speaker">A:</span> <input type="text" id="q3" autocomplete="off"> <i>(you / hear)</i> the news about David?</div>
+          <div class="dialogue-line"><span class="speaker">B:</span> No, what <input type="text" id="q4" autocomplete="off"> <i>(happen)</i> this time?</div>
+          <div class="dialogue-line"><span class="speaker">A:</span> Well, yesterday <input type="text" id="q5" autocomplete="off"> <i>(he / buy)</i> a brand new car.</div>
+        </div>
+      `
+    },
+    {
+      answers: {
+        q1: ["have you ever visited", "have you visited"],
+        q2: ["i went to", "i went"],
+        q3: ["have you heard"],
+        q4: ["happened", "has happened"],
+        q5: ["she finished"]
+      },
+      content: `
+        <div class="dialogue-section">
+          <div class="dialogue-number">1</div>
+          <div class="dialogue-line"><span class="speaker">A:</span> <input type="text" id="q1" autocomplete="off"> <i>(you / ever / visit)</i> a book fair?</div>
+          <div class="dialogue-line"><span class="speaker">B:</span> Yes, I have. <input type="text" id="q2" autocomplete="off"> <i>(I / go)</i> Tokyo last year and there was a big book fair.</div>
+        </div>
+        <div class="dialogue-section">
+          <div class="dialogue-number">2</div>
+          <div class="dialogue-line"><span class="speaker">A:</span> <input type="text" id="q3" autocomplete="off"> <i>(you / hear)</i> the news about Sarah?</div>
+          <div class="dialogue-line"><span class="speaker">B:</span> No, what <input type="text" id="q4" autocomplete="off"> <i>(happen)</i> this time?</div>
+          <div class="dialogue-line"><span class="speaker">A:</span> Well, yesterday <input type="text" id="q5" autocomplete="off"> <i>(she / finish)</i> her university interview.</div>
+        </div>
+      `
+    }
+  ];
+
+  function startQuiz() {
+    const nameInput = document.getElementById("studentName").value.trim();
+    if (!nameInput) {
+      alert("Please enter your name.");
+      return;
+    }
+    currentStudent = nameInput;
+
+    selectedVersion = Math.floor(Math.random() * versions.length);
+    document.getElementById("dialogues-container").innerHTML = versions[selectedVersion].content;
+
+    document.getElementById("start-screen").style.display = "none";
+    document.getElementById("quiz-screen").style.display = "block";
+  }
+
+  function submitAnswers() {
+    const btn = document.getElementById("submit-btn");
+    const status = document.getElementById("status");
+    btn.disabled = true;
+    status.style.color = "#333";
+    status.innerText = "Submitting answers...";
+
+    let score = 0;
+    const total = 5;
+    const currentAnswers = versions[selectedVersion].answers;
+
+    for (let i = 1; i <= total; i++) {
+      let inputVal = document.getElementById("q" + i).value.trim().toLowerCase();
+      inputVal = inputVal.replace(/[`’‘]/g, "'");
+
+      if (currentAnswers["q" + i].includes(inputVal)) {
+        score++;
+      }
+    }
+
+    const percentage = Math.round((score / total) * 100);
+
+    const payload = {
+      name: currentStudent,
+      percentage: percentage,
+      taskName: TASK_NAME
+    };
+
+    fetch(SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    })
+    .then(() => {
+      document.getElementById("quiz-screen").style.display = "none";
+      document.getElementById("result-screen").style.display = "block";
+    })
+    .catch(err => {
+      console.error(err);
+      status.style.color = "red";
+      status.innerText = "Error sending results. Please try again.";
+      btn.disabled = false;
+    });
+  }
+</script>
+
+</body>
+</html>
