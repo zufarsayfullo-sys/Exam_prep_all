@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elementary Level - Past Simple Practice</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: #f4f6f8;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      background: #ffffff;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    h2 {
+      font-size: 1.2rem;
+      margin-bottom: 16px;
+      line-height: 1.4;
+      color: #1a1a1a;
+    }
+
+    .word-box {
+      background-color: #eef2f5;
+      border: 1px solid #d1d9e0;
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+      font-weight: bold;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+      word-spacing: 15px;
+    }
+
+    .dialogue {
+      line-height: 2;
+      font-size: 1rem;
+      margin-bottom: 24px;
+    }
+
+    .dialogue-line {
+      margin-bottom: 12px;
+    }
+
+    .speaker {
+      font-weight: bold;
+      color: #0088cc;
+    }
+
+    input[type="text"] {
+      border: none;
+      border-bottom: 2px solid #0088cc;
+      background: transparent;
+      outline: none;
+      padding: 2px 6px;
+      font-size: 0.95rem;
+      width: 130px;
+      text-align: center;
+    }
+
+    input[type="text"]:focus {
+      border-bottom-color: #005580;
+      background-color: #f0f8ff;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    .full-input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    .btn {
+      width: 100%;
+      background-color: #2aabee;
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background-color: #228be6;
+    }
+
+    .btn:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+
+    #quiz-screen, #result-screen {
+      display: none;
+    }
+
+    .status-msg {
+      margin-top: 15px;
+      text-align: center;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- STEP 1: REGISTRATION SCREEN -->
+  <div id="start-screen">
+    <h2>Welcome to Elementary Past Simple Practice</h2>
+    <div class="form-group">
+      <label for="studentName">Enter your full name to start:</label>
+      <input type="text" id="studentName" class="full-input" placeholder="e.g., John Doe">
+    </div>
+    <button class="btn" onclick="startQuiz()">Start Exercise</button>
+  </div>
+
+  <!-- STEP 2: QUIZ SCREEN -->
+  <div id="quiz-screen">
+    <h2>1. Complete the conversation with the PAST SIMPLE in NEGATIVE form using the verbs in the box.</h2>
+    
+    <div class="word-box">
+      go &nbsp;&nbsp; have &nbsp;&nbsp; play &nbsp;&nbsp; want &nbsp;&nbsp; do
+    </div>
+
+    <div class="dialogue" id="dialogue-container">
+      <!-- Dynamic dialogue version loads here -->
+    </div>
+
+    <button class="btn" id="submit-btn" onclick="submitAnswers()">Submit Answers</button>
+    <div id="status" class="status-msg"></div>
+  </div>
+
+  <!-- STEP 3: COMPLETION SCREEN -->
+  <div id="result-screen">
+    <h2>Thank You!</h2>
+    <p>Your answers have been submitted successfully.</p>
+  </div>
+
+</div>
+
+<script>
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbziYaus_lYw_yK7ju04NPgSaAV2viKzW9kFbXucI2hiRgJSs4tjuGaJhJa7Eh8x35U/exec";
+  const TASK_NAME = "Past Simple Negative Exercise";
+
+  let currentStudent = "";
+  let selectedVersion = 0;
+
+  // 5 Variations keeping same grammar answers:
+  // Answers: 1. didn't have | 2. didn't want | 3. didn't go | 4. didn't play | 5. didn't do
+  const versions = [
+    {
+      lines: [
+        { speaker: "Rani", text: "Hi Pedro, how are you?" },
+        { speaker: "Pedro", text: "A bit hungry actually. I [1] breakfast this morning." },
+        { speaker: "Rani", text: "Why?" },
+        { speaker: "Pedro", text: "I was in a hurry, so I [2] to cook breakfast." },
+        { speaker: "Rani", text: "Well, do you want to come to the gym with me later?" },
+        { speaker: "Pedro", text: "Yes, I do. I [3] to the gym yesterday so today is good for me. Also, we [4] tennis last week. Do you want to play on Saturday?" },
+        { speaker: "Rani", text: "Yes, I'd like that. I [5] any exercise last week so tennis is a good idea." }
+      ]
+    },
+    {
+      lines: [
+        { speaker: "Alex", text: "Hi Sam, how are you?" },
+        { speaker: "Sam", text: "A bit tired actually. I [1] lunch yesterday afternoon." },
+        { speaker: "Alex", text: "Why?" },
+        { speaker: "Sam", text: "I was busy at work, so I [2] to prepare food." },
+        { speaker: "Alex", text: "Well, do you want to go to the park with me later?" },
+        { speaker: "Sam", text: "Yes, I do. I [3] to the park on Monday so today is good for me. Also, we [4] football last month. Do you want to play on Sunday?" },
+        { speaker: "Alex", text: "Yes, I'd like that. I [5] any sport last week so football is a good idea." }
+      ]
+    },
+    {
+      lines: [
+        { speaker: "Sarah", text: "Hi Leo, how are you?" },
+        { speaker: "Leo", text: "A bit exhausted actually. I [1] dinner last night." },
+        { speaker: "Sarah", text: "Why?" },
+        { speaker: "Leo", text: "I was late home, so I [2] to cook anything." },
+        { speaker: "Sarah", text: "Well, do you want to visit the swimming pool with me later?" },
+        { speaker: "Leo", text: "Yes, I do. I [3] to the pool on Tuesday so today is good for me. Also, we [4] volleyball last weekend. Do you want to play tomorrow?" },
+        { speaker: "Sarah", text: "Yes, I'd like that. I [5] any activity last week so swimming is a good idea." }
+      ]
+    },
+    {
+      lines: [
+        { speaker: "Maya", text: "Hi John, how are you?" },
+        { speaker: "John", text: "A bit hungry actually. I [1] a snack earlier today." },
+        { speaker: "Maya", text: "Why?" },
+        { speaker: "John", text: "I was studying, so I [2] to waste time." },
+        { speaker: "Maya", text: "Well, do you want to head to the sports center with me later?" },
+        { speaker: "John", text: "Yes, I do. I [3] to the center on Wednesday so today is good for me. Also, we [4] basketball last week. Do you want to play this evening?" },
+        { speaker: "Maya", text: "Yes, I'd like that. I [5] any training last week so basketball is a good idea." }
+      ]
+    },
+    {
+      lines: [
+        { speaker: "Anna", text: "Hi David, how are you?" },
+        { speaker: "David", text: "A bit slow actually. I [1] coffee this morning." },
+        { speaker: "Anna", text: "Why?" },
+        { speaker: "David", text: "I was running late, so I [2] to stop at the cafe." },
+        { speaker: "Anna", text: "Well, do you want to go to the stadium with me later?" },
+        { speaker: "David", text: "Yes, I do. I [3] to the stadium on Thursday so today is good for me. Also, we [4] badminton last week. Do you want to play on Sunday?" },
+        { speaker: "Anna", text: "Yes, I'd like that. I [5] any workouts last week so badminton is a good idea." }
+      ]
+    }
+  ];
+
+  const correctAnswers = {
+    q1: ["didn't have", "did not have"],
+    q2: ["didn't want", "did not want"],
+    q3: ["didn't go", "did not go"],
+    q4: ["didn't play", "did not play"],
+    q5: ["didn't do", "did not do"]
+  };
+
+  function startQuiz() {
+    const nameInput = document.getElementById("studentName").value.trim();
+    if (!nameInput) {
+      alert("Please enter your name.");
+      return;
+    }
+    currentStudent = nameInput;
+
+    // Pick random version (0-4)
+    selectedVersion = Math.floor(Math.random() * versions.length);
+    renderDialogue(versions[selectedVersion]);
+
+    document.getElementById("start-screen").style.display = "none";
+    document.getElementById("quiz-screen").style.display = "block";
+  }
+
+  function renderDialogue(versionData) {
+    const container = document.getElementById("dialogue-container");
+    container.innerHTML = "";
+
+    versionData.lines.forEach(line => {
+      let formattedText = line.text
+        .replace("[1]", '<input type="text" id="q1" autocomplete="off">')
+        .replace("[2]", '<input type="text" id="q2" autocomplete="off">')
+        .replace("[3]", '<input type="text" id="q3" autocomplete="off">')
+        .replace("[4]", '<input type="text" id="q4" autocomplete="off">')
+        .replace("[5]", '<input type="text" id="q5" autocomplete="off">');
+
+      const lineDiv = document.createElement("div");
+      lineDiv.className = "dialogue-line";
+      lineDiv.innerHTML = `<span class="speaker">${line.speaker}:</span> ${formattedText}`;
+      container.appendChild(lineDiv);
+    });
+  }
+
+  function submitAnswers() {
+    const btn = document.getElementById("submit-btn");
+    const status = document.getElementById("status");
+    btn.disabled = true;
+    status.style.color = "#333";
+    status.innerText = "Submitting answers...";
+
+    let score = 0;
+    const total = 5;
+
+    for (let i = 1; i <= total; i++) {
+      const inputVal = document.getElementById("q" + i).value.trim().toLowerCase();
+      if (correctAnswers["q" + i].includes(inputVal)) {
+        score++;
+      }
+    }
+
+    const percentage = Math.round((score / total) * 100);
+
+    const payload = {
+      name: currentStudent,
+      percentage: percentage,
+      taskName: TASK_NAME
+    };
+
+    fetch(SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    })
+    .then(() => {
+      document.getElementById("quiz-screen").style.display = "none";
+      document.getElementById("result-screen").style.display = "block";
+    })
+    .catch(err => {
+      console.error(err);
+      status.style.color = "red";
+      status.innerText = "Error sending results. Please try again.";
+      btn.disabled = false;
+    });
+  }
+</script>
+
+</body>
+</html>
