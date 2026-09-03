@@ -1,1 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>ExamPrep — Choose Your Level</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+  <style>
+    :root{--purple-dark:#26215C;--purple-main:#534AB7;--purple-light:#CECBF6;--purple-pale:#EEEDFE;--teal-main:#0F6E56;--teal-pale:#E1F5EE;--amber-main:#854F0B;--amber-pale:#FAEEDA;--coral-main:#993C1D;--coral-pale:#FAECE7;--blue-main:#185FA5;--blue-pale:#E6F1FB;--bg:#F0EEF8;--radius:14px;}
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+    html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);}
+    .page{height:100%;display:flex;flex-direction:column;overflow:hidden;}
+    .header{background:var(--purple-dark);padding:16px 18px 24px;flex-shrink:0;}
+    .header-top{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+    .logo-icon{width:38px;height:38px;background:var(--purple-main);border-radius:10px;display:flex;align-items:center;justify-content:center;}
+    .logo-icon i{font-size:20px;color:#fff;}
+    .logo-text{font-size:17px;font-weight:600;color:#fff;}
+    .logo-sub{font-size:11px;color:var(--purple-light);margin-top:1px;}
+    .header-title{font-size:22px;font-weight:600;color:#fff;margin-bottom:5px;}
+    .header-sub{font-size:13px;color:var(--purple-light);line-height:1.5;}
+    .scroll{flex:1;overflow-y:auto;padding:20px 16px 40px;-webkit-overflow-scrolling:touch;}
+    .scroll::-webkit-scrollbar{width:0;}
+    .section-label{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:12px;}
+    .levels-grid{display:flex;flex-direction:column;gap:10px;margin-bottom:28px;}
+    .level-card{border-radius:var(--radius);padding:16px;display:flex;align-items:center;gap:14px;text-decoration:none;cursor:pointer;transition:transform 0.15s;}
+    .level-card:active{transform:scale(0.98);}
+    .level-badge{width:50px;height:50px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;}
+    .level-info{flex:1;}
+    .level-name{font-size:16px;font-weight:600;margin-bottom:3px;}
+    .level-cefr{font-size:12px;margin-bottom:7px;}
+    .level-tags{display:flex;gap:5px;flex-wrap:wrap;}
+    .level-tag{font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;}
+    .level-arrow i{font-size:20px;}
+    .footer-note{text-align:center;font-size:12px;color:#aaa;line-height:1.6;}
+    .footer-note i{font-size:14px;vertical-align:-2px;margin-right:4px;}
+  </style>
+</head>
+<body>
+<div class="page">
+  <div class="header">
+    <div class="header-top">
+      <div class="logo-icon"><i class="ti ti-school"></i></div>
+      <div>
+        <div class="logo-text">ExamPrep</div>
+        <div class="logo-sub">Inter Nation English School</div>
+      </div>
+    </div>
+    <div class="header-title">Choose your level</div>
+    <div class="header-sub">Select the level that matches your English and start practising.</div>
+  </div>
 
+  <div class="scroll">
+    <div class="section-label">English levels</div>
+    <div class="levels-grid">
+
+      <a class="level-card" href="./beginner/index.html" style="background:#EEEDFE;">
+        <div class="level-badge" style="background:#534AB7;color:#fff;">A1</div>
+        <div class="level-info">
+          <div class="level-name" style="color:#26215C;">Beginner</div>
+          <div class="level-cefr" style="color:#534AB7;">CEFR Level A1</div>
+          <div class="level-tags">
+            <span class="level-tag" style="background:rgba(83,74,183,0.12);color:#534AB7;">Grammar</span>
+            <span class="level-tag" style="background:rgba(83,74,183,0.12);color:#534AB7;">Vocabulary</span>
+            <span class="level-tag" style="background:rgba(83,74,183,0.12);color:#534AB7;">Skills</span>
+          </div>
+        </div>
+        <div class="level-arrow" style="color:#534AB7;"><i class="ti ti-chevron-right"></i></div>
+      </a>
+
+      <a class="level-card" href="./elementary/index.html" style="background:#E1F5EE;">
+        <div class="level-badge" style="background:#0F6E56;color:#fff;">A2</div>
+        <div class="level-info">
+          <div class="level-name" style="color:#04342C;">Elementary</div>
+          <div class="level-cefr" style="color:#0F6E56;">CEFR Level A2</div>
+          <div class="level-tags">
+            <span class="level-tag" style="background:rgba(15,110,86,0.12);color:#0F6E56;">Grammar</span>
+            <span class="level-tag" style="background:rgba(15,110,86,0.12);color:#0F6E56;">Vocabulary</span>
+            <span class="level-tag" style="background:rgba(15,110,86,0.12);color:#0F6E56;">Skills</span>
+          </div>
+        </div>
+        <div class="level-arrow" style="color:#0F6E56;"><i class="ti ti-chevron-right"></i></div>
+      </a>
+
+      <a class="level-card" href="./pre-inter/index.html" style="background:#FAEEDA;">
+        <div class="level-badge" style="background:#854F0B;color:#fff;">B1</div>
+        <div class="level-info">
+          <div class="level-name" style="color:#412402;">Pre-Intermediate</div>
+          <div class="level-cefr" style="color:#854F0B;">CEFR Level B1</div>
+          <div class="level-tags">
+            <span class="level-tag" style="background:rgba(133,79,11,0.12);color:#854F0B;">Grammar</span>
+            <span class="level-tag" style="background:rgba(133,79,11,0.12);color:#854F0B;">Vocabulary</span>
+            <span class="level-tag" style="background:rgba(133,79,11,0.12);color:#854F0B;">Skills</span>
+          </div>
+        </div>
+        <div class="level-arrow" style="color:#854F0B;"><i class="ti ti-chevron-right"></i></div>
+      </a>
+
+      <a class="level-card" href="./inter/index.html" style="background:#FAECE7;">
+        <div class="level-badge" style="background:#993C1D;color:#fff;">B2</div>
+        <div class="level-info">
+          <div class="level-name" style="color:#4A1B0C;">Intermediate</div>
+          <div class="level-cefr" style="color:#993C1D;">CEFR Level B2</div>
+          <div class="level-tags">
+            <span class="level-tag" style="background:rgba(153,60,29,0.12);color:#993C1D;">Grammar</span>
+            <span class="level-tag" style="background:rgba(153,60,29,0.12);color:#993C1D;">Vocabulary</span>
+            <span class="level-tag" style="background:rgba(153,60,29,0.12);color:#993C1D;">Skills</span>
+          </div>
+        </div>
+        <div class="level-arrow" style="color:#993C1D;"><i class="ti ti-chevron-right"></i></div>
+      </a>
+
+      <a class="level-card" href="./upper/index.html" style="background:#E6F1FB;">
+        <div class="level-badge" style="background:#185FA5;color:#fff;">C1</div>
+        <div class="level-info">
+          <div class="level-name" style="color:#042C53;">Upper-Intermediate</div>
+          <div class="level-cefr" style="color:#185FA5;">CEFR Level C1</div>
+          <div class="level-tags">
+            <span class="level-tag" style="background:rgba(24,95,165,0.12);color:#185FA5;">Grammar</span>
+            <span class="level-tag" style="background:rgba(24,95,165,0.12);color:#185FA5;">Vocabulary</span>
+            <span class="level-tag" style="background:rgba(24,95,165,0.12);color:#185FA5;">Skills</span>
+          </div>
+        </div>
+        <div class="level-arrow" style="color:#185FA5;"><i class="ti ti-chevron-right"></i></div>
+      </a>
+
+    </div>
+    <div class="footer-note">
+      <i class="ti ti-info-circle"></i>
+      Not sure about your level? Ask your teacher.
+    </div>
+  </div>
+</div>
+<script>
+  const tg=window.Telegram?.WebApp;
+  tg?.ready();tg?.expand();
+</script>
+</body>
+</html>
