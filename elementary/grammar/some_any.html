@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elementary Level - Quantifiers Practice</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: #f4f6f8;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      background: #ffffff;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    h2 {
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+      line-height: 1.4;
+      color: #1a1a1a;
+    }
+
+    .sentences-list {
+      line-height: 2.2;
+      font-size: 1rem;
+      margin-bottom: 24px;
+    }
+
+    .sentence-item {
+      margin-bottom: 12px;
+    }
+
+    input[type="text"] {
+      border: none;
+      border-bottom: 2px solid #0088cc;
+      background: transparent;
+      outline: none;
+      padding: 2px 6px;
+      font-size: 0.95rem;
+      width: 100px;
+      text-align: center;
+    }
+
+    input[type="text"]:focus {
+      border-bottom-color: #005580;
+      background-color: #f0f8ff;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    .full-input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    .btn {
+      width: 100%;
+      background-color: #2aabee;
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background-color: #228be6;
+    }
+
+    .btn:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+
+    #quiz-screen, #result-screen {
+      display: none;
+    }
+
+    .status-msg {
+      margin-top: 15px;
+      text-align: center;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- STEP 1: REGISTRATION SCREEN -->
+  <div id="start-screen">
+    <h2>Welcome to Elementary Quantifiers Practice</h2>
+    <div class="form-group">
+      <label for="studentName">Enter your full name to start:</label>
+      <input type="text" id="studentName" class="full-input" placeholder="e.g., John Doe">
+    </div>
+    <button class="btn" onclick="startQuiz()">Start Exercise</button>
+  </div>
+
+  <!-- STEP 2: QUIZ SCREEN -->
+  <div id="quiz-screen">
+    <h2>4. Complete the sentences with <i>a/an</i>, <i>some</i> or <i>any</i>.</h2>
+    
+    <div class="sentences-list" id="sentences-container">
+      <!-- Dynamic version content loads here -->
+    </div>
+
+    <button class="btn" id="submit-btn" onclick="submitAnswers()">Submit Answers</button>
+    <div id="status" class="status-msg"></div>
+  </div>
+
+  <!-- STEP 3: COMPLETION SCREEN -->
+  <div id="result-screen">
+    <h2>Thank You!</h2>
+    <p>Your answers have been submitted successfully.</p>
+  </div>
+
+</div>
+
+<script>
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbziYaus_lYw_yK7ju04NPgSaAV2viKzW9kFbXucI2hiRgJSs4tjuGaJhJa7Eh8x35U/exec";
+  const TASK_NAME = "Quantifiers (a/an/some/any) Exercise";
+
+  let currentStudent = "";
+  let selectedVersion = 0;
+
+  const versions = [
+    {
+      sentences: [
+        "1. Mark doesn't have [1] milk in his cup.",
+        "2. We don't have [2] English books.",
+        "3. I bought [3] honey at the supermarket.",
+        "4. I have [4] hour to write a letter.",
+        "5. Would you like [5] juice?"
+      ]
+    },
+    {
+      sentences: [
+        "1. David doesn't have [1] water in his glass.",
+        "2. We don't have [2] new magazines.",
+        "3. I bought [3] bread at the supermarket.",
+        "4. I have [4] hour to eat an apple.",
+        "5. Would you like [5] tea?"
+      ]
+    },
+    {
+      sentences: [
+        "1. Tom doesn't have [1] tea in his mug.",
+        "2. We don't have [2] blue pens.",
+        "3. I bought [3] sugar at the supermarket.",
+        "4. I have [4] hour to finish my homework.",
+        "5. Would you like [5] coffee?"
+      ]
+    },
+    {
+      sentences: [
+        "1. Alex doesn't have [1] juice in his bottle.",
+        "2. We don't have [2] picture dictionaries.",
+        "3. I bought [3] cheese at the supermarket.",
+        "4. I have [4] hour to clean the room.",
+        "5. Would you like [5] water?"
+      ]
+    },
+    {
+      sentences: [
+        "1. Sam doesn't have [1] coffee in his cup.",
+        "2. We don't have [2] exercise notebooks.",
+        "3. I bought [3] rice at the supermarket.",
+        "4. I have [4] hour to watch a movie.",
+        "5. Would you like [5] milk?"
+      ]
+    }
+  ];
+
+  const correctAnswers = {
+    q1: ["any"],
+    q2: ["any"],
+    q3: ["some"],
+    q4: ["an"],
+    q5: ["some"]
+  };
+
+  function startQuiz() {
+    const nameInput = document.getElementById("studentName").value.trim();
+    if (!nameInput) {
+      alert("Please enter your name.");
+      return;
+    }
+    currentStudent = nameInput;
+
+    selectedVersion = Math.floor(Math.random() * versions.length);
+    renderSentences(versions[selectedVersion]);
+
+    document.getElementById("start-screen").style.display = "none";
+    document.getElementById("quiz-screen").style.display = "block";
+  }
+
+  function renderSentences(versionData) {
+    const container = document.getElementById("sentences-container");
+    container.innerHTML = "";
+
+    versionData.sentences.forEach((sentence, index) => {
+      const qNum = index + 1;
+      let formatted = sentence.replace(`[${qNum}]`, `<input type="text" id="q${qNum}" autocomplete="off">`);
+
+      const sDiv = document.createElement("div");
+      sDiv.className = "sentence-item";
+      sDiv.innerHTML = formatted;
+      container.appendChild(sDiv);
+    });
+  }
+
+  function submitAnswers() {
+    const btn = document.getElementById("submit-btn");
+    const status = document.getElementById("status");
+    btn.disabled = true;
+    status.style.color = "#333";
+    status.innerText = "Submitting answers...";
+
+    let score = 0;
+    const total = 5;
+
+    for (let i = 1; i <= total; i++) {
+      let inputVal = document.getElementById("q" + i).value.trim().toLowerCase();
+      inputVal = inputVal.replace(/[`’‘]/g, "'");
+
+      if (correctAnswers["q" + i].includes(inputVal)) {
+        score++;
+      }
+    }
+
+    const percentage = Math.round((score / total) * 100);
+
+    const payload = {
+      name: currentStudent,
+      percentage: percentage,
+      taskName: TASK_NAME
+    };
+
+    fetch(SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    })
+    .then(() => {
+      document.getElementById("quiz-screen").style.display = "none";
+      document.getElementById("result-screen").style.display = "block";
+    })
+    .catch(err => {
+      console.error(err);
+      status.style.color = "red";
+      status.innerText = "Error sending results. Please try again.";
+      btn.disabled = false;
+    });
+  }
+</script>
+
+</body>
+</html>
