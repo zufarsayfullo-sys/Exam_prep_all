@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elementary Level - Present Perfect Text Practice</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: #f4f6f8;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 650px;
+      background: #ffffff;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    h2 {
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+      line-height: 1.4;
+      color: #1a1a1a;
+    }
+
+    .text-box {
+      line-height: 2.2;
+      font-size: 1rem;
+      margin-bottom: 24px;
+      background-color: #fcfcfc;
+      padding: 18px;
+      border-radius: 8px;
+      border: 1px solid #eef2f5;
+    }
+
+    input[type="text"] {
+      border: none;
+      border-bottom: 2px solid #0088cc;
+      background: transparent;
+      outline: none;
+      padding: 2px 6px;
+      font-size: 0.95rem;
+      width: 130px;
+      text-align: center;
+    }
+
+    input[type="text"]:focus {
+      border-bottom-color: #005580;
+      background-color: #f0f8ff;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    .full-input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    .btn {
+      width: 100%;
+      background-color: #2aabee;
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background-color: #228be6;
+    }
+
+    .btn:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+
+    #quiz-screen, #result-screen {
+      display: none;
+    }
+
+    .status-msg {
+      margin-top: 15px;
+      text-align: center;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <div id="start-screen">
+    <h2>Welcome to Present Perfect Text Practice</h2>
+    <div class="form-group">
+      <label for="studentName">Enter your full name to start:</label>
+      <input type="text" id="studentName" class="full-input" placeholder="e.g., John Doe">
+    </div>
+    <button class="btn" onclick="startQuiz()">Start Exercise</button>
+  </div>
+
+  <div id="quiz-screen">
+    <h2>9. Complete the text with the PRESENT PERFECT form of the verb in (brackets).</h2>
+    
+    <div class="text-box" id="text-container">
+      </div>
+
+    <button class="btn" id="submit-btn" onclick="submitAnswers()">Submit Answers</button>
+    <div id="status" class="status-msg"></div>
+  </div>
+
+  <div id="result-screen">
+    <h2>Thank You!</h2>
+    <p>Your answers have been submitted successfully.</p>
+  </div>
+
+</div>
+
+<script>
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbziYaus_lYw_yK7ju04NPgSaAV2viKzW9kFbXucI2hiRgJSs4tjuGaJhJa7Eh8x35U/exec";
+  const TASK_NAME = "Present Perfect Text Exercise";
+
+  let currentStudent = "";
+  let selectedVersion = 0;
+
+  const versions = [
+    {
+      answers: {
+        q1: ["has sung"],
+        q2: ["have traveled", "have travelled"],
+        q3: ["has been"],
+        q4: ["haven't played", "have not played"],
+        q5: ["haven't learned", "haven't learnt", "have not learned", "have not learnt"],
+        q6: ["has worked"],
+        q7: ["has made"],
+        q8: ["haven't found", "have not found"],
+        q9: ["have started", "'ve started"],
+        q10: ["have sold", "'ve sold"]
+      },
+      html: `<b>My family and art</b><br><br>
+        My family all love art and we’ve done lots of different things over the years. My mother 
+        <input type="text" id="q1" autocomplete="off"> <i>(sing)</i> in a choir for a long time now. They 
+        <input type="text" id="q2" autocomplete="off"> <i>(travel)</i> all over the world and performed in many famous concert halls. Next year, they’re going on a tour of Australia. And my father plays three instruments – the piano, guitar and saxophone. He 
+        <input type="text" id="q3" autocomplete="off"> <i>(be)</i> in a band for over twenty years, but they 
+        <input type="text" id="q4" autocomplete="off"> <i>(not play)</i> a concert for a long time. My sister and I aren’t musical – we 
+        <input type="text" id="q5" autocomplete="off"> <i>(not learn)</i> to play any musical instruments very well. At school we were more interested in art. My sister became a graphic designer and she 
+        <input type="text" id="q6" autocomplete="off"> <i>(work)</i> for an animation company for five years. She 
+        <input type="text" id="q7" autocomplete="off"> <i>(make)</i> many cartoon animals for children’s films. I studied painting at university, but I 
+        <input type="text" id="q8" autocomplete="off"> <i>(not find)</i> a job as a full-time artist because it’s really difficult. Recently, I 
+        <input type="text" id="q9" autocomplete="off"> <i>(start)</i> working at a museum as a tour guide and I 
+        <input type="text" id="q10" autocomplete="off"> <i>(sell)</i> two of my paintings online.`
+    },
+    {
+      answers: {
+        q1: ["has danced"],
+        q2: ["have traveled", "have travelled"],
+        q3: ["has been"],
+        q4: ["haven't played", "have not played"],
+        q5: ["haven't learned", "haven't learnt", "have not learned", "have not learnt"],
+        q6: ["has worked"],
+        q7: ["has made"],
+        q8: ["haven't found", "have not found"],
+        q9: ["have started", "'ve started"],
+        q10: ["have sold", "'ve sold"]
+      },
+      html: `<b>My family and sports</b><br><br>
+        My family all love sports and we’ve done lots of different activities over the years. My mother 
+        <input type="text" id="q1" autocomplete="off"> <i>(dance)</i> in a dance group for a long time now. They 
+        <input type="text" id="q2" autocomplete="off"> <i>(travel)</i> all over the world and performed in many famous stadiums. Next year, they’re going on a tour of Europe. And my father plays three sports – tennis, football and basketball. He 
+        <input type="text" id="q3" autocomplete="off"> <i>(be)</i> in a local team for over twenty years, but they 
+        <input type="text" id="q4" autocomplete="off"> <i>(not play)</i> a match for a long time. My brother and I aren’t athletic – we 
+        <input type="text" id="q5" autocomplete="off"> <i>(not learn)</i> to play any team sports very well. At school we were more interested in photography. My brother became a sports photographer and he 
+        <input type="text" id="q6" autocomplete="off"> <i>(work)</i> for a magazine company for five years. He 
+        <input type="text" id="q7" autocomplete="off"> <i>(make)</i> many great pictures for sports magazines. I studied photography at university, but I 
+        <input type="text" id="q8" autocomplete="off"> <i>(not find)</i> a job as a full-time photographer because it’s really difficult. Recently, I 
+        <input type="text" id="q9" autocomplete="off"> <i>(start)</i> working at a sports center as an assistant and I 
+        <input type="text" id="q10" autocomplete="off"> <i>(sell)</i> two of my photos online.`
+    },
+    {
+      answers: {
+        q1: ["has cooked"],
+        q2: ["have traveled", "have travelled"],
+        q3: ["has been"],
+        q4: ["haven't prepared", "have not prepared"],
+        q5: ["haven't learned", "haven't learnt", "have not learned", "have not learnt"],
+        q6: ["has worked"],
+        q7: ["has made"],
+        q8: ["haven't found", "have not found"],
+        q9: ["have started", "'ve started"],
+        q10: ["have sold", "'ve sold"]
+      },
+      html: `<b>My family and cooking</b><br><br>
+        My family all love cooking and we’ve made lots of different dishes over the years. My mother 
+        <input type="text" id="q1" autocomplete="off"> <i>(cook)</i> in a restaurant group for a long time now. They 
+        <input type="text" id="q2" autocomplete="off"> <i>(travel)</i> all over the world and worked in many famous kitchens. Next year, they’re going on a tour of Italy. And my father cooks three types of food – Italian, French and Mexican. He 
+        <input type="text" id="q3" autocomplete="off"> <i>(be)</i> a chef for over twenty years, but they 
+        <input type="text" id="q4" autocomplete="off"> <i>(not prepare)</i> a big dinner for a long time. My sister and I aren’t chefs – we 
+        <input type="text" id="q5" autocomplete="off"> <i>(not learn)</i> to cook complex meals very well. At school we were more interested in baking. My sister became a baker and she 
+        <input type="text" id="q6" autocomplete="off"> <i>(work)</i> for a bakery company for five years. She 
+        <input type="text" id="q7" autocomplete="off"> <i>(make)</i> many birthday cakes for children’s parties. I studied baking at college, but I 
+        <input type="text" id="q8" autocomplete="off"> <i>(not find)</i> a job as a full-time baker because it’s really difficult. Recently, I 
+        <input type="text" id="q9" autocomplete="off"> <i>(start)</i> working at a cafe as a helper and I 
+        <input type="text" id="q10" autocomplete="off"> <i>(sell)</i> two of my cakes online.`
+    },
+    {
+      answers: {
+        q1: ["has acted"],
+        q2: ["have traveled", "have travelled"],
+        q3: ["has been"],
+        q4: ["haven't played", "have not played"],
+        q5: ["haven't learned", "haven't learnt", "have not learned", "have not learnt"],
+        q6: ["has worked"],
+        q7: ["has made"],
+        q8: ["haven't found", "have not found"],
+        q9: ["have started", "'ve started"],
+        q10: ["have sold", "'ve sold"]
+      },
+      html: `<b>My family and theater</b><br><br>
+        My family all love drama and we’ve done lots of different plays over the years. My mother 
+        <input type="text" id="q1" autocomplete="off"> <i>(act)</i> in a local theater for a long time now. They 
+        <input type="text" id="q2" autocomplete="off"> <i>(travel)</i> all over the country and performed in many famous theaters. Next year, they’re going on a tour of Canada. And my father plays three instruments for the plays – violin, flute and cello. He 
+        <input type="text" id="q3" autocomplete="off"> <i>(be)</i> in an orchestra for over twenty years, but they 
+        <input type="text" id="q4" autocomplete="off"> <i>(not play)</i> a show for a long time. My brother and I aren’t actors – we 
+        <input type="text" id="q5" autocomplete="off"> <i>(not learn)</i> to act in plays very well. At school we were more interested in set design. My brother became a set designer and he 
+        <input type="text" id="q6" autocomplete="off"> <i>(work)</i> for a theater company for five years. He 
+        <input type="text" id="q7" autocomplete="off"> <i>(make)</i> many stage designs for children’s plays. I studied design at university, but I 
+        <input type="text" id="q8" autocomplete="off"> <i>(not find)</i> a job as a full-time designer because it’s really difficult. Recently, I 
+        <input type="text" id="q9" autocomplete="off"> <i>(start)</i> working at a theater as a guide and I 
+        <input type="text" id="q10" autocomplete="off"> <i>(sell)</i> two of my designs online.`
+    },
+    {
+      answers: {
+        q1: ["has written"],
+        q2: ["have traveled", "have travelled"],
+        q3: ["has been"],
+        q4: ["haven't published", "have not published"],
+        q5: ["haven't learned", "haven't learnt", "have not learned", "have not learnt"],
+        q6: ["has worked"],
+        q7: ["has made"],
+        q8: ["haven't found", "have not found"],
+        q9: ["have started", "'ve started"],
+        q10: ["have sold", "'ve sold"]
+      },
+      html: `<b>My family and writing</b><br><br>
+        My family all love writing and we’ve created lots of different stories over the years. My mother 
+        <input type="text" id="q1" autocomplete="off"> <i>(write)</i> for a literature club for a long time now. They 
+        <input type="text" id="q2" autocomplete="off"> <i>(travel)</i> all over the world and spoken in many famous libraries. Next year, they’re going on a tour of Japan. And my father writes three genres – poetry, drama and fiction. He 
+        <input type="text" id="q3" autocomplete="off"> <i>(be)</i> in a writers' group for over twenty years, but they 
+        <input type="text" id="q4" autocomplete="off"> <i>(not publish)</i> a book for a long time. My sister and I aren’t writers – we 
+        <input type="text" id="q5" autocomplete="off"> <i>(not learn)</i> to write long stories very well. At school we were more interested in digital art. My sister became an illustrator and she 
+        <input type="text" id="q6" autocomplete="off"> <i>(work)</i> for a publishing company for five years. She 
+        <input type="text" id="q7" autocomplete="off"> <i>(make)</i> many book covers for children’s novels. I studied illustration at university, but I 
+        <input type="text" id="q8" autocomplete="off"> <i>(not find)</i> a job as a full-time illustrator because it’s really difficult. Recently, I 
+        <input type="text" id="q9" autocomplete="off"> <i>(start)</i> working at a library as an assistant and I 
+        <input type="text" id="q10" autocomplete="off"> <i>(sell)</i> two of my illustrations online.`
+    }
+  ];
+
+  function startQuiz() {
+    const nameInput = document.getElementById("studentName").value.trim();
+    if (!nameInput) {
+      alert("Please enter your name.");
+      return;
+    }
+    currentStudent = nameInput;
+
+    selectedVersion = Math.floor(Math.random() * versions.length);
+    document.getElementById("text-container").innerHTML = versions[selectedVersion].html;
+
+    document.getElementById("start-screen").style.display = "none";
+    document.getElementById("quiz-screen").style.display = "block";
+  }
+
+  function submitAnswers() {
+    const btn = document.getElementById("submit-btn");
+    const status = document.getElementById("status");
+    btn.disabled = true;
+    status.style.color = "#333";
+    status.innerText = "Submitting answers...";
+
+    let score = 0;
+    const total = 10;
+    const currentAnswers = versions[selectedVersion].answers;
+
+    for (let i = 1; i <= total; i++) {
+      let inputVal = document.getElementById("q" + i).value.trim().toLowerCase();
+      inputVal = inputVal.replace(/[`’‘]/g, "'");
+
+      if (currentAnswers["q" + i].includes(inputVal)) {
+        score++;
+      }
+    }
+
+    const percentage = Math.round((score / total) * 100);
+
+    const payload = {
+      name: currentStudent,
+      percentage: percentage,
+      taskName: TASK_NAME
+    };
+
+    fetch(SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    })
+    .then(() => {
+      document.getElementById("quiz-screen").style.display = "none";
+      document.getElementById("result-screen").style.display = "block";
+    })
+    .catch(err => {
+      console.error(err);
+      status.style.color = "red";
+      status.innerText = "Error sending results. Please try again.";
+      btn.disabled = false;
+    });
+  }
+</script>
+
+</body>
+</html>
