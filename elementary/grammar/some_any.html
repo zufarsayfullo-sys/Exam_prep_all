@@ -55,11 +55,27 @@
       font-size: 0.95rem;
       width: 100px;
       text-align: center;
+      transition: border-color 0.3s, background-color 0.3s;
     }
 
     input[type="text"]:focus {
       border-bottom-color: #005580;
       background-color: #f0f8ff;
+    }
+
+    /* Input validation state styling */
+    input[type="text"].correct {
+      border-bottom: 2px solid #2b8a3e !important;
+      background-color: #e6fcf5 !important;
+      color: #2b8a3e;
+      font-weight: bold;
+    }
+
+    input[type="text"].incorrect {
+      border-bottom: 2px solid #c92a2a !important;
+      background-color: #fff5f5 !important;
+      color: #c92a2a;
+      font-weight: bold;
     }
 
     .form-group {
@@ -91,6 +107,7 @@
       font-weight: bold;
       cursor: pointer;
       transition: background 0.2s;
+      margin-top: 10px;
     }
 
     .btn:hover {
@@ -102,6 +119,14 @@
       cursor: not-allowed;
     }
 
+    .btn-secondary {
+      background-color: #6c757d;
+    }
+
+    .btn-secondary:hover {
+      background-color: #5a6268;
+    }
+
     #quiz-screen, #result-screen {
       display: none;
     }
@@ -109,6 +134,52 @@
     .status-msg {
       margin-top: 15px;
       text-align: center;
+      font-weight: bold;
+    }
+
+    /* Results and Feedback visual styling */
+    .results-header {
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .score-badge {
+      display: inline-block;
+      padding: 8px 16px;
+      border-radius: 20px;
+      background-color: #e7f5ff;
+      color: #0088cc;
+      font-weight: bold;
+      font-size: 1.2rem;
+      margin: 10px 0;
+    }
+
+    .mistakes-container {
+      margin: 16px 0;
+      text-align: left;
+    }
+
+    .mistake-card {
+      background-color: #fff5f5;
+      border-left: 4px solid #ff4d4f;
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      line-height: 1.5;
+    }
+
+    .mistake-card.correct-card {
+      background-color: #f6ffed;
+      border-left: 4px solid #52c41a;
+    }
+
+    .user-ans {
+      color: #cf1322;
+      font-weight: bold;
+    }
+
+    .correct-ans {
+      color: #389e0d;
       font-weight: bold;
     }
   </style>
@@ -139,10 +210,18 @@
     <div id="status" class="status-msg"></div>
   </div>
 
-  <!-- STEP 3: COMPLETION SCREEN -->
+  <!-- STEP 3: COMPLETION SCREEN WITH VISUAL RESULTS -->
   <div id="result-screen">
-    <h2>Thank You!</h2>
-    <p>Your answers have been submitted successfully.</p>
+    <div class="results-header">
+      <h2>Exercise Completed!</h2>
+      <div class="score-badge" id="score-display">0%</div>
+    </div>
+
+    <div class="mistakes-container" id="feedback-content">
+      <!-- Itemized feedback renders here after submission -->
+    </div>
+
+    <button class="btn btn-secondary" onclick="goBackToGrammar()">Back to Grammar</button>
   </div>
 
 </div>
@@ -249,22 +328,51 @@
 
     let score = 0;
     const total = 5;
+    let mistakesList = [];
+    let feedbackHtml = "";
 
     for (let i = 1; i <= total; i++) {
-      let inputVal = document.getElementById("q" + i).value.trim().toLowerCase();
-      inputVal = inputVal.replace(/[`’‘]/g, "'");
+      const inputElem = document.getElementById("q" + i);
+      let rawVal = inputElem.value.trim();
+      let inputVal = rawVal.toLowerCase().replace(/[`’‘]/g, "'");
 
-      if (correctAnswers["q" + i].includes(inputVal)) {
+      inputElem.disabled = true;
+
+      const expectedList = correctAnswers["q" + i];
+      const isCorrect = expectedList.includes(inputVal);
+
+      if (isCorrect) {
         score++;
+        inputElem.classList.add("correct");
+        feedbackHtml += `
+          <div class="mistake-card correct-card">
+            <strong>Question ${i}: Correct!</strong><br>
+            Your Answer: <span class="correct-ans">${rawVal || "(empty)"}</span>
+          </div>`;
+      } else {
+        inputElem.classList.add("incorrect");
+        let formattedUserAns = rawVal === "" ? "(blank)" : rawVal;
+        let primaryCorrectAns = expectedList[0];
+
+        mistakesList.push(`Question ${i}: [Your answer: "${formattedUserAns}"] vs [Correct: "${primaryCorrectAns}"]`);
+
+        feedbackHtml += `
+          <div class="mistake-card">
+            <strong>Question ${i}: Incorrect</strong><br>
+            Your Answer: <span class="user-ans">${formattedUserAns}</span><br>
+            Correct Answer: <span class="correct-ans">${primaryCorrectAns}</span>
+          </div>`;
       }
     }
 
     const percentage = Math.round((score / total) * 100);
+    const mistakesString = mistakesList.length > 0 ? mistakesList.join(" | ") : "None (100%)";
 
     const payload = {
       name: currentStudent,
       percentage: percentage,
-      taskName: TASK_NAME
+      taskName: TASK_NAME,
+      mistakes: mistakesString
     };
 
     fetch(SCRIPT_URL, {
@@ -274,15 +382,26 @@
       body: JSON.stringify(payload)
     })
     .then(() => {
-      document.getElementById("quiz-screen").style.display = "none";
-      document.getElementById("result-screen").style.display = "block";
+      setTimeout(() => {
+        document.getElementById("quiz-screen").style.display = "none";
+        document.getElementById("score-display").innerText = `Score: ${percentage}% (${score}/${total})`;
+        document.getElementById("feedback-content").innerHTML = feedbackHtml;
+        document.getElementById("result-screen").style.display = "block";
+      }, 1000);
     })
     .catch(err => {
       console.error(err);
       status.style.color = "red";
       status.innerText = "Error sending results. Please try again.";
       btn.disabled = false;
+      for (let i = 1; i <= total; i++) {
+        document.getElementById("q" + i).disabled = false;
+      }
     });
+  }
+
+  function goBackToGrammar() {
+    window.location.href = "index.html";
   }
 </script>
 
