@@ -104,6 +104,7 @@
       font-weight: bold;
       cursor: pointer;
       transition: background 0.2s;
+      margin-top: 10px;
     }
 
     .btn:hover {
@@ -115,6 +116,14 @@
       cursor: not-allowed;
     }
 
+    .btn-secondary {
+      background-color: #6c757d;
+    }
+
+    .btn-secondary:hover {
+      background-color: #5a6268;
+    }
+
     #quiz-screen, #result-screen {
       display: none;
     }
@@ -122,6 +131,51 @@
     .status-msg {
       margin-top: 15px;
       text-align: center;
+      font-weight: bold;
+    }
+
+    /* Results Screen Styling */
+    .results-header {
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .score-badge {
+      display: inline-block;
+      padding: 8px 16px;
+      border-radius: 20px;
+      background-color: #e7f5ff;
+      color: #0088cc;
+      font-weight: bold;
+      font-size: 1.2rem;
+      margin: 10px 0;
+    }
+
+    .mistakes-container {
+      margin: 16px 0;
+      text-align: left;
+    }
+
+    .mistake-card {
+      background-color: #fff5f5;
+      border-left: 4px solid #ff4d4f;
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+    }
+
+    .mistake-card.correct-card {
+      background-color: #f6ffed;
+      border-left: 4px solid #52c41a;
+    }
+
+    .user-ans {
+      color: #cf1322;
+      font-weight: bold;
+    }
+
+    .correct-ans {
+      color: #389e0d;
       font-weight: bold;
     }
   </style>
@@ -152,17 +206,24 @@
     <div id="status" class="status-msg"></div>
   </div>
 
-  <!-- STEP 3: COMPLETION SCREEN -->
+  <!-- STEP 3: COMPLETION & RESULTS SCREEN -->
   <div id="result-screen">
-    <h2>Thank You!</h2>
-    <p>Your answers have been submitted successfully.</p>
+    <div class="results-header">
+      <h2>Exercise Completed!</h2>
+      <div class="score-badge" id="score-display">0%</div>
+    </div>
+
+    <div class="mistakes-container" id="feedback-content">
+      <!-- Detailed item feedback renders here -->
+    </div>
+
+    <button class="btn btn-secondary" onclick="goBackToGrammar()">Back to Grammar</button>
   </div>
 
 </div>
 
 <script>
   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbziYaus_lYw_yK7ju04NPgSaAV2viKzW9kFbXucI2hiRgJSs4tjuGaJhJa7Eh8x35U/exec";
-  const TASK_NAME = "Going To Conversation Exercise";
 
   let currentStudent = "";
   let selectedVersion = 0;
@@ -265,31 +326,81 @@
     status.innerText = "Submitting answers...";
 
     let score = 0;
-    const total = 5; // 5 numbered items in original image
+    const total = 5;
+    let mistakesList = [];
+    let feedbackHtml = "";
 
-    const q1a = document.getElementById("q1a").value.trim().toLowerCase();
-    const q1b = document.getElementById("q1b").value.trim().toLowerCase();
-    if (targetAnswers.q1a.includes(q1a) && targetAnswers.q1b.includes(q1b)) score++;
+    // Question 1
+    const raw1a = document.getElementById("q1a").value.trim();
+    const raw1b = document.getElementById("q1b").value.trim();
+    const val1a = raw1a.toLowerCase();
+    const val1b = raw1b.toLowerCase();
+    if (targetAnswers.q1a.includes(val1a) && targetAnswers.q1b.includes(val1b)) {
+      score++;
+      feedbackHtml += `<div class="mistake-card correct-card"><strong>Question 1: Correct!</strong><br>Your Answer: <span class="correct-ans">${raw1a} ... ${raw1b}</span></div>`;
+    } else {
+      let ansText = `${raw1a || "(blank)"} ... ${raw1b || "(blank)"}`;
+      mistakesList.push(`Q1: [Your answer: "${ansText}"] vs [Correct: "are ... going to"]`);
+      feedbackHtml += `<div class="mistake-card"><strong>Question 1: Incorrect</strong><br>Your Answer: <span class="user-ans">${ansText}</span><br>Correct Answer: <span class="correct-ans">are ... going to</span></div>`;
+    }
 
-    let q2 = document.getElementById("q2").value.trim().toLowerCase().replace(/[`’‘]/g, "'");
-    if (targetAnswers.q2.includes(q2)) score++;
+    // Question 2
+    const raw2 = document.getElementById("q2").value.trim();
+    const val2 = raw2.toLowerCase().replace(/[`’‘]/g, "'");
+    if (targetAnswers.q2.includes(val2)) {
+      score++;
+      feedbackHtml += `<div class="mistake-card correct-card"><strong>Question 2: Correct!</strong><br>Your Answer: <span class="correct-ans">${raw2}</span></div>`;
+    } else {
+      let ansText = raw2 || "(blank)";
+      mistakesList.push(`Q2: [Your answer: "${ansText}"] vs [Correct: "'m going to"]`);
+      feedbackHtml += `<div class="mistake-card"><strong>Question 2: Incorrect</strong><br>Your Answer: <span class="user-ans">${ansText}</span><br>Correct Answer: <span class="correct-ans">'m going to</span></div>`;
+    }
 
-    let q3 = document.getElementById("q3").value.trim().toLowerCase().replace(/[`’‘]/g, "'");
-    if (targetAnswers.q3.includes(q3)) score++;
+    // Question 3
+    const raw3 = document.getElementById("q3").value.trim();
+    const val3 = raw3.toLowerCase().replace(/[`’‘]/g, "'");
+    if (targetAnswers.q3.includes(val3)) {
+      score++;
+      feedbackHtml += `<div class="mistake-card correct-card"><strong>Question 3: Correct!</strong><br>Your Answer: <span class="correct-ans">${raw3}</span></div>`;
+    } else {
+      let ansText = raw3 || "(blank)";
+      mistakesList.push(`Q3: [Your answer: "${ansText}"] vs [Correct: "aren't going to"]`);
+      feedbackHtml += `<div class="mistake-card"><strong>Question 3: Incorrect</strong><br>Your Answer: <span class="user-ans">${ansText}</span><br>Correct Answer: <span class="correct-ans">aren't going to</span></div>`;
+    }
 
-    let q4 = document.getElementById("q4").value.trim().toLowerCase().replace(/[`’‘]/g, "'");
-    if (targetAnswers.q4.includes(q4)) score++;
+    // Question 4
+    const raw4 = document.getElementById("q4").value.trim();
+    const val4 = raw4.toLowerCase().replace(/[`’‘]/g, "'");
+    if (targetAnswers.q4.includes(val4)) {
+      score++;
+      feedbackHtml += `<div class="mistake-card correct-card"><strong>Question 4: Correct!</strong><br>Your Answer: <span class="correct-ans">${raw4}</span></div>`;
+    } else {
+      let ansText = raw4 || "(blank)";
+      mistakesList.push(`Q4: [Your answer: "${ansText}"] vs [Correct: "are going to"]`);
+      feedbackHtml += `<div class="mistake-card"><strong>Question 4: Incorrect</strong><br>Your Answer: <span class="user-ans">${ansText}</span><br>Correct Answer: <span class="correct-ans">are going to</span></div>`;
+    }
 
-    const q5a = document.getElementById("q5a").value.trim().toLowerCase();
-    const q5b = document.getElementById("q5b").value.trim().toLowerCase();
-    if (targetAnswers.q5a.includes(q5a) && targetAnswers.q5b.includes(q5b)) score++;
+    // Question 5
+    const raw5a = document.getElementById("q5a").value.trim();
+    const raw5b = document.getElementById("q5b").value.trim();
+    const val5a = raw5a.toLowerCase();
+    const val5b = raw5b.toLowerCase();
+    if (targetAnswers.q5a.includes(val5a) && targetAnswers.q5b.includes(val5b)) {
+      score++;
+      feedbackHtml += `<div class="mistake-card correct-card"><strong>Question 5: Correct!</strong><br>Your Answer: <span class="correct-ans">${raw5a} ... ${raw5b}</span></div>`;
+    } else {
+      let ansText = `${raw5a || "(blank)"} ... ${raw5b || "(blank)"}`;
+      mistakesList.push(`Q5: [Your answer: "${ansText}"] vs [Correct: "are ... going to"]`);
+      feedbackHtml += `<div class="mistake-card"><strong>Question 5: Incorrect</strong><br>Your Answer: <span class="user-ans">${ansText}</span><br>Correct Answer: <span class="correct-ans">are ... going to</span></div>`;
+    }
 
     const percentage = Math.round((score / total) * 100);
+    const mistakesString = mistakesList.length > 0 ? mistakesList.join(" | ") : "None (100%)";
 
     const payload = {
       name: currentStudent,
       percentage: percentage,
-      taskName: TASK_NAME
+      mistakes: mistakesString
     };
 
     fetch(SCRIPT_URL, {
@@ -300,6 +411,8 @@
     })
     .then(() => {
       document.getElementById("quiz-screen").style.display = "none";
+      document.getElementById("score-display").innerText = `Score: ${percentage}% (${score}/${total})`;
+      document.getElementById("feedback-content").innerHTML = feedbackHtml;
       document.getElementById("result-screen").style.display = "block";
     })
     .catch(err => {
@@ -308,6 +421,10 @@
       status.innerText = "Error sending results. Please try again.";
       btn.disabled = false;
     });
+  }
+
+  function goBackToGrammar() {
+    window.location.href = "index.html";
   }
 </script>
 
