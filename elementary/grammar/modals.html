@@ -1,1 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elementary Level - Modal Verbs Practice</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
 
+    body {
+      background-color: #f4f6f8;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      background: #ffffff;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    h2 {
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+      line-height: 1.4;
+      color: #1a1a1a;
+    }
+
+    .sentences-list {
+      line-height: 2;
+      font-size: 1rem;
+      margin-bottom: 24px;
+    }
+
+    .sentence-item {
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed #e0e0e0;
+    }
+
+    .options-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 6px;
+      margin-left: 20px;
+    }
+
+    .option-label {
+      cursor: pointer;
+      font-weight: normal;
+      font-size: 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    .full-input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    .btn {
+      width: 100%;
+      background-color: #2aabee;
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 10px;
+    }
+
+    .btn:hover {
+      background-color: #228be6;
+    }
+
+    .btn:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background-color: #6c757d;
+    }
+
+    .btn-secondary:hover {
+      background-color: #5a6268;
+    }
+
+    #quiz-screen, #result-screen {
+      display: none;
+    }
+
+    .status-msg {
+      margin-top: 15px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .results-header {
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .score-badge {
+      display: inline-block;
+      padding: 8px 16px;
+      border-radius: 20px;
+      background-color: #e7f5ff;
+      color: #0088cc;
+      font-weight: bold;
+      font-size: 1.2rem;
+      margin: 10px 0;
+    }
+
+    .mistakes-container {
+      margin: 16px 0;
+      text-align: left;
+    }
+
+    .mistake-card {
+      background-color: #fff5f5;
+      border-left: 4px solid #ff4d4f;
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      line-height: 1.5;
+    }
+
+    .mistake-card.correct-card {
+      background-color: #f6ffed;
+      border-left: 4px solid #52c41a;
+    }
+
+    .user-ans {
+      color: #cf1322;
+      font-weight: bold;
+    }
+
+    .correct-ans {
+      color: #389e0d;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- STEP 1: REGISTRATION SCREEN -->
+  <div id="start-screen">
+    <h2>Welcome to Elementary Modal Verbs Practice</h2>
+    <div class="form-group">
+      <label for="studentName">Enter your full name to start:</label>
+      <input type="text" id="studentName" class="full-input" placeholder="e.g., John Doe">
+    </div>
+    <button class="btn" onclick="startQuiz()">Start Exercise</button>
+  </div>
+
+  <!-- STEP 2: QUIZ SCREEN -->
+  <div id="quiz-screen">
+    <h2>3. Complete the sentences. Choose the correct answer a, b or c.</h2>
+    
+    <div class="sentences-list" id="sentences-container">
+      <!-- Dynamic version content loads here -->
+    </div>
+
+    <button class="btn" id="submit-btn" onclick="submitAnswers()">Submit Answers</button>
+    <div id="status" class="status-msg"></div>
+  </div>
+
+  <!-- STEP 3: COMPLETION SCREEN -->
+  <div id="result-screen">
+    <div class="results-header">
+      <h2>Exercise Completed!</h2>
+      <div class="score-badge" id="score-display">0%</div>
+    </div>
+
+    <div class="mistakes-container" id="feedback-content">
+      <!-- Itemized feedback renders here after submission -->
+    </div>
+
+    <button class="btn btn-secondary" onclick="goBackToGrammar()">Back to Grammar</button>
+  </div>
+
+</div>
+
+<script>
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbziYaus_lYw_yK7ju04NPgSaAV2viKzW9kFbXucI2hiRgJSs4tjuGaJhJa7Eh8x35U/exec";
+  const TASK_NAME = "Modal Verbs Exercise";
+
+  let currentStudent = "";
+  let selectedVersion = 0;
+
+  const versions = [
+    {
+      questions: [
+        {
+          text: "1. You ________ drink some water when you run in hot weather.",
+          options: { a: "has to", b: "should", c: "shouldn't" },
+          correct: "b"
+        },
+        {
+          text: "2. Drivers ________ stop at a red light. It's the law.",
+          options: { a: "have to", b: "don't have to", c: "shouldn't" },
+          correct: "a"
+        },
+        {
+          text: "3. You ________ eat late at night. It's not a good idea for your stomach.",
+          options: { a: "have to", b: "should", c: "shouldn't" },
+          correct: "c"
+        },
+        {
+          text: "4. The park is free today, so you ________ buy a ticket.",
+          options: { a: "have to", b: "don't have to", c: "should" },
+          correct: "b"
+        },
+        {
+          text: "5. I think students ________ clean their desks after class.",
+          options: { a: "shouldn't", b: "should", c: "don't have to" },
+          correct: "b"
+        }
+      ]
+    },
+    {
+      questions: [
+        {
+          text: "1. You ________ wear a helmet when you ride a motorbike. It's the law.",
+          options: { a: "have to", b: "don't have to", c: "shouldn't" },
+          correct: "a"
+        },
+        {
+          text: "2. People ________ sleep 8 hours every night to stay healthy.",
+          options: { a: "has to", b: "should", c: "shouldn't" },
+          correct: "b"
+        },
+        {
+          text: "3. You ________ watch TV all day. It's not a good idea.",
+          options: { a: "should", b: "have to", c: "shouldn't" },
+          correct: "c"
+        },
+        {
+          text: "4. Tomorrow is Sunday, so I ________ wake up early.",
+          options: { a: "have to", b: "don't have to", c: "should" },
+          correct: "b"
+        },
+        {
+          text: "5. I think teachers ________ be kind to young learners.",
+          options: { a: "shouldn't", b: "should", c: "don't have to" },
+          correct: "b"
+        }
+      ]
+    },
+    {
+      questions: [
+        {
+          text: "1. You ________ walk on the street when the cars are fast. It's dangerous.",
+          options: { a: "should", b: "have to", c: "shouldn't" },
+          correct: "c"
+        },
+        {
+          text: "2. You ________ show your passport at the airport. It's the law.",
+          options: { a: "have to", b: "don't have to", c: "shouldn't" },
+          correct: "a"
+        },
+        {
+          text: "3. You ________ go to bed early if you have a test tomorrow.",
+          options: { a: "has to", b: "should", c: "shouldn't" },
+          correct: "b"
+        },
+        {
+          text: "4. Today is a holiday, so children ________ go to school.",
+          options: { a: "have to", b: "don't have to", c: "should" },
+          correct: "b"
+        },
+        {
+          text: "5. I think everyone ________ drink warm tea when they are sick.",
+          options: { a: "shouldn't", b: "should", c: "don't have to" },
+          correct: "b"
+        }
+      ]
+    },
+    {
+      questions: [
+        {
+          text: "1. You ________ show your library card to borrow books. It's the rule.",
+          options: { a: "have to", b: "don't have to", c: "shouldn't" },
+          correct: "a"
+        },
+        {
+          text: "2. You ________ eat too much sugar. It's not a good idea.",
+          options: { a: "should", b: "have to", c: "shouldn't" },
+          correct: "c"
+        },
+        {
+          text: "3. Students ________ revise before the big exam.",
+          options: { a: "has to", b: "should", c: "shouldn't" },
+          correct: "b"
+        },
+        {
+          text: "4. Breakfast at the hotel is free, so we ________ pay for it.",
+          options: { a: "have to", b: "don't have to", c: "should" },
+          correct: "b"
+        },
+        {
+          text: "5. I think people ________ talk quietly in a library.",
+          options: { a: "shouldn't", b: "should", c: "don't have to" },
+          correct: "b"
+        }
+      ]
+    },
+    {
+      questions: [
+        {
+          text: "1. You ________ do your homework to get good marks.",
+          options: { a: "has to", b: "should", c: "shouldn't" },
+          correct: "b"
+        },
+        {
+          text: "2. You ________ wear a seatbelt in a car. It's the law.",
+          options: { a: "have to", b: "don't have to", c: "shouldn't" },
+          correct: "a"
+        },
+        {
+          text: "3. You ________ play loud music at midnight. It's not a good idea.",
+          options: { a: "should", b: "have to", c: "shouldn't" },
+          correct: "c"
+        },
+        {
+          text: "4. You can use the internet for free here, so you ________ pay.",
+          options: { a: "have to", b: "don't have to", c: "should" },
+          correct: "b"
+        },
+        {
+          text: "5. I think children ________ eat fruits and vegetables every day.",
+          options: { a: "shouldn't", b: "should", c: "don't have to" },
+          correct: "b"
+        }
+      ]
+    }
+  ];
+
+  function startQuiz() {
+    const nameInput = document.getElementById("studentName").value.trim();
+    if (!nameInput) {
+      alert("Please enter your name.");
+      return;
+    }
+    currentStudent = nameInput;
+
+    selectedVersion = Math.floor(Math.random() * versions.length);
+    renderSentences(versions[selectedVersion]);
+
+    document.getElementById("start-screen").style.display = "none";
+    document.getElementById("quiz-screen").style.display = "block";
+  }
+
+  function renderSentences(versionData) {
+    const container = document.getElementById("sentences-container");
+    container.innerHTML = "";
+
+    versionData.questions.forEach((q, index) => {
+      const qNum = index + 1;
+      const sDiv = document.createElement("div");
+      sDiv.className = "sentence-item";
+
+      let optionsHtml = `<div class="options-group">`;
+      for (const [key, val] of Object.entries(q.options)) {
+        optionsHtml += `
+          <label class="option-label">
+            <input type="radio" name="q${qNum}" value="${key}"> <b>${key}</b> ${val}
+          </label>
+        `;
+      }
+      optionsHtml += `</div>`;
+
+      sDiv.innerHTML = `<div>${q.text}</div>${optionsHtml}`;
+      container.appendChild(sDiv);
+    });
+  }
+
+  function submitAnswers() {
+    const btn = document.getElementById("submit-btn");
+    const status = document.getElementById("status");
+    
+    // Check if all questions have been answered
+    for (let i = 1; i <= 5; i++) {
+      const selected = document.querySelector(`input[name="q${i}"]:checked`);
+      if (!selected) {
+        alert("Please answer all questions before submitting.");
+        return;
+      }
+    }
+
+    btn.disabled = true;
+    status.style.color = "#333";
+    status.innerText = "Submitting answers...";
+
+    let score = 0;
+    const total = 5;
+    const currentQuestions = versions[selectedVersion].questions;
+    let mistakesList = [];
+    let feedbackHtml = "";
+
+    for (let i = 1; i <= total; i++) {
+      const selectedRadio = document.querySelector(`input[name="q${i}"]:checked`);
+      const userChoiceKey = selectedRadio ? selectedRadio.value : "";
+      const qObj = currentQuestions[i - 1];
+
+      const isCorrect = userChoiceKey === qObj.correct;
+      const userAnsText = userChoiceKey ? `${userChoiceKey}) ${qObj.options[userChoiceKey]}` : "(blank)";
+      const correctAnsText = `${qObj.correct}) ${qObj.options[qObj.correct]}`;
+
+      // Disable inputs
+      const radios = document.querySelectorAll(`input[name="q${i}"]`);
+      radios.forEach(r => r.disabled = true);
+
+      if (isCorrect) {
+        score++;
+        feedbackHtml += `
+          <div class="mistake-card correct-card">
+            <strong>Question ${i}: Correct!</strong><br>
+            Your Answer: <span class="correct-ans">${userAnsText}</span>
+          </div>`;
+      } else {
+        mistakesList.push(`Question ${i}: [Your answer: "${userAnsText}"] vs [Correct: "${correctAnsText}"]`);
+
+        feedbackHtml += `
+          <div class="mistake-card">
+            <strong>Question ${i}: Incorrect</strong><br>
+            Your Answer: <span class="user-ans">${userAnsText}</span><br>
+            Correct Answer: <span class="correct-ans">${correctAnsText}</span>
+          </div>`;
+      }
+    }
+
+    const percentage = Math.round((score / total) * 100);
+    const mistakesString = mistakesList.length > 0 ? mistakesList.join(" | ") : "None (100%)";
+
+    const payload = {
+      name: currentStudent,
+      percentage: percentage,
+      taskName: TASK_NAME,
+      mistakes: mistakesString
+    };
+
+    fetch(SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    })
+    .then(() => {
+      setTimeout(() => {
+        document.getElementById("quiz-screen").style.display = "none";
+        document.getElementById("score-display").innerText = `Score: ${percentage}% (${score}/${total})`;
+        document.getElementById("feedback-content").innerHTML = feedbackHtml;
+        document.getElementById("result-screen").style.display = "block";
+      }, 1000);
+    })
+    .catch(err => {
+      console.error(err);
+      status.style.color = "red";
+      status.innerText = "Error sending results. Please try again.";
+      btn.disabled = false;
+      for (let i = 1; i <= total; i++) {
+        const radios = document.querySelectorAll(`input[name="q${i}"]`);
+        radios.forEach(r => r.disabled = false);
+      }
+    });
+  }
+
+  function goBackToGrammar() {
+    window.location.href = "index.html";
+  }
+</script>
+
+</body>
+</html>
