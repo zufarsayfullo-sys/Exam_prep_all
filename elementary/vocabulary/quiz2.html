@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Vocabulary - Quiz 2</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #eef2f5; padding: 20px; }
+    .quiz-card { max-width: 650px; background: white; margin: 0 auto; padding: 25px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .q-box { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
+    .options label { display: block; margin: 8px 0; cursor: pointer; }
+    button { background: #28a745; color: white; padding: 12px 20px; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; width: 100%; }
+    .mistake-item { color: #dc3545; background: #f8d7da; padding: 8px; margin: 5px 0; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <div class="quiz-card" id="quiz-container">
+    <h2>Quiz 2: Get, Take, or Have</h2>
+    <div id="questions"></div>
+    <button id="submitBtn" onclick="submitAnswers()">Submit Test</button>
+  </div>
+
+  <div class="quiz-card" id="result-screen" style="display:none;">
+    <h2 id="score-text"></h2>
+    <h3>Review Mistakes:</h3>
+    <div id="mistakes-log"></div>
+    <br>
+    <a href="index.html" style="display:inline-block; padding:10px 15px; background:#007bff; color:white; border-radius:5px; text-decoration:none;">Back to Menu</a>
+  </div>
+
+  <script>
+    const SCRIPT_URL = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL";
+    const TASK_NAME = "Vocab Quiz 2: Get, Take, Have";
+
+    const questionPool = [
+      {
+        answer: "take",
+        variants: [
+          "Mary used her new camera to ____ photos on holiday.",
+          "We usually ____ a lot of pictures when traveling.",
+          "He decided to ____ a photo of the monument.",
+          "She likes to ____ photos of flowers in spring.",
+          "They asked a tourist to ____ a picture for them."
+        ]
+      },
+      {
+        answer: "have",
+        variants: [
+          "I didn't ____ time to write a letter.",
+          "She didn't ____ time to prepare breakfast.",
+          "We rarely ____ time to watch movies during weekdays.",
+          "Did you ____ time to complete the project?",
+          "He doesn't ____ time to go to the bank today."
+        ]
+      },
+      {
+        answer: "have",
+        variants: [
+          "You should ____ a shower before bedtime.",
+          "I always ____ a warm bath after work.",
+          "He likes to ____ a shower early in the morning.",
+          "They usually ____ a bath before going to sleep.",
+          "Remember to ____ a quick shower after swimming."
+        ]
+      },
+      {
+        answer: "get",
+        variants: [
+          "I ____ a lot of emails every day.",
+          "She usually ____ ten messages every morning.",
+          "We ____ many letters from our students.",
+          "He ____ a new email every five minutes.",
+          "Do you ____ many calls during work hours?"
+        ]
+      },
+      {
+        answer: "have",
+        variants: [
+          "We always ____ a good time on holiday.",
+          "Did you ____ a good time at the party?",
+          "The children ____ a wonderful time at the zoo.",
+          "I hope you ____ a good time at the festival.",
+          "We had a hard week, but we ____ a great time on weekends."
+        ]
+      }
+    ];
+
+    let selectedQuestions = [];
+
+    function loadQuestions() {
+      const container = document.getElementById("questions");
+      container.innerHTML = "";
+      
+      selectedQuestions = questionPool.map((q, idx) => {
+        const randomVariant = q.variants[Math.floor(Math.random() * q.variants.length)];
+        return { id: idx, prompt: randomVariant, answer: q.answer };
+      });
+
+      selectedQuestions.forEach((q, i) => {
+        let html = `<div class="q-box"><p><b>${i + 1}. ${q.prompt}</b></p><div class="options">`;
+        ["get", "take", "have"].forEach(opt => {
+          html += `<label><input type="radio" name="q${i}" value="${opt}"> ${opt}</label>`;
+        });
+        html += `</div></div>`;
+        container.innerHTML += html;
+      });
+    }
+
+    function submitAnswers() {
+      const name = localStorage.getItem("currentStudentName") || "Anonymous";
+      let score = 0;
+      let mistakes = [];
+
+      selectedQuestions.forEach((q, i) => {
+        const selected = document.querySelector(`input[name="q${i}"]:checked`);
+        const val = selected ? selected.value : "No Answer";
+        if (val === q.answer) {
+          score++;
+        } else {
+          mistakes.push(`Q${i+1}: Selected "${val}" | Correct: "${q.answer}"`);
+        }
+      });
+
+      const percentage = Math.round((score / selectedQuestions.length) * 100);
+      const mistakesString = mistakes.length > 0 ? mistakes.join(" ; ") : "None";
+
+      const payload = new URLSearchParams();
+      payload.append("name", name);
+      payload.append("percentage", percentage);
+      payload.append("taskName", TASK_NAME);
+      payload.append("mistakes", mistakesString);
+
+      document.getElementById("submitBtn").disabled = true;
+
+      fetch(SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: payload.toString()
+      }).finally(() => {
+        document.getElementById("quiz-container").style.display = "none";
+        document.getElementById("result-screen").style.display = "block";
+        document.getElementById("score-text").innerText = `Score: ${percentage}% (${score}/${selectedQuestions.length})`;
+        
+        const mLog = document.getElementById("mistakes-log");
+        if (mistakes.length === 0) {
+          mLog.innerHTML = "<p style='color:green;'>Great job! Perfect score.</p>";
+        } else {
+          mLog.innerHTML = mistakes.map(m => `<div class="mistake-item">${m}</div>`).join("");
+        }
+      });
+    }
+
+    window.onload = loadQuestions;
+  </script>
+</body>
+</html>
