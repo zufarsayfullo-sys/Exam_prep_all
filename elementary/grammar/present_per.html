@@ -91,6 +91,7 @@
       font-weight: bold;
       cursor: pointer;
       transition: background 0.2s;
+      margin-top: 10px;
     }
 
     .btn:hover {
@@ -102,6 +103,14 @@
       cursor: not-allowed;
     }
 
+    .btn-secondary {
+      background-color: #6c757d;
+    }
+
+    .btn-secondary:hover {
+      background-color: #5a6268;
+    }
+
     #quiz-screen, #result-screen {
       display: none;
     }
@@ -109,6 +118,52 @@
     .status-msg {
       margin-top: 15px;
       text-align: center;
+      font-weight: bold;
+    }
+
+    /* Results Screen Styling */
+    .results-header {
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .score-badge {
+      display: inline-block;
+      padding: 8px 16px;
+      border-radius: 20px;
+      background-color: #e7f5ff;
+      color: #0088cc;
+      font-weight: bold;
+      font-size: 1.2rem;
+      margin: 10px 0;
+    }
+
+    .mistakes-container {
+      margin: 16px 0;
+      text-align: left;
+    }
+
+    .mistake-card {
+      background-color: #fff5f5;
+      border-left: 4px solid #ff4d4f;
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      line-height: 1.5;
+    }
+
+    .mistake-card.correct-card {
+      background-color: #f6ffed;
+      border-left: 4px solid #52c41a;
+    }
+
+    .user-ans {
+      color: #cf1322;
+      font-weight: bold;
+    }
+
+    .correct-ans {
+      color: #389e0d;
       font-weight: bold;
     }
   </style>
@@ -130,22 +185,29 @@
     <h2>9. Complete the text with the PRESENT PERFECT form of the verb in (brackets).</h2>
     
     <div class="text-box" id="text-container">
-      </div>
+    </div>
 
     <button class="btn" id="submit-btn" onclick="submitAnswers()">Submit Answers</button>
     <div id="status" class="status-msg"></div>
   </div>
 
   <div id="result-screen">
-    <h2>Thank You!</h2>
-    <p>Your answers have been submitted successfully.</p>
+    <div class="results-header">
+      <h2>Exercise Completed!</h2>
+      <div class="score-badge" id="score-display">0%</div>
+    </div>
+
+    <div class="mistakes-container" id="feedback-content">
+      <!-- Detailed item feedback renders here -->
+    </div>
+
+    <button class="btn btn-secondary" onclick="goBackToGrammar()">Back to Grammar</button>
   </div>
 
 </div>
 
 <script>
   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbziYaus_lYw_yK7ju04NPgSaAV2viKzW9kFbXucI2hiRgJSs4tjuGaJhJa7Eh8x35U/exec";
-  const TASK_NAME = "Present Perfect Text Exercise";
 
   let currentStudent = "";
   let selectedVersion = 0;
@@ -308,22 +370,43 @@
     let score = 0;
     const total = 10;
     const currentAnswers = versions[selectedVersion].answers;
+    let mistakesList = [];
+    let feedbackHtml = "";
 
     for (let i = 1; i <= total; i++) {
-      let inputVal = document.getElementById("q" + i).value.trim().toLowerCase();
-      inputVal = inputVal.replace(/[`’‘]/g, "'");
+      let rawVal = document.getElementById("q" + i).value.trim();
+      let inputVal = rawVal.toLowerCase().replace(/[`’‘]/g, "'").replace(/\s+/g, " ");
+      let correctOptions = currentAnswers["q" + i];
 
-      if (currentAnswers["q" + i].includes(inputVal)) {
+      if (correctOptions.includes(inputVal)) {
         score++;
+        feedbackHtml += `
+          <div class="mistake-card correct-card">
+            <strong>Gap ${i}: Correct!</strong><br>
+            Your Answer: <span class="correct-ans">${rawVal || "(empty)"}</span>
+          </div>`;
+      } else {
+        let formattedUserAns = rawVal === "" ? "(blank)" : rawVal;
+        let primaryCorrectAns = correctOptions[0];
+
+        mistakesList.push(`Gap ${i}: [Your answer: "${formattedUserAns}"] vs [Correct: "${primaryCorrectAns}"]`);
+
+        feedbackHtml += `
+          <div class="mistake-card">
+            <strong>Gap ${i}: Incorrect</strong><br>
+            Your Answer: <span class="user-ans">${formattedUserAns}</span><br>
+            Correct Answer: <span class="correct-ans">${primaryCorrectAns}</span>
+          </div>`;
       }
     }
 
     const percentage = Math.round((score / total) * 100);
+    const mistakesString = mistakesList.length > 0 ? mistakesList.join(" | ") : "None (100%)";
 
     const payload = {
       name: currentStudent,
       percentage: percentage,
-      taskName: TASK_NAME
+      mistakes: mistakesString
     };
 
     fetch(SCRIPT_URL, {
@@ -334,6 +417,8 @@
     })
     .then(() => {
       document.getElementById("quiz-screen").style.display = "none";
+      document.getElementById("score-display").innerText = `Score: ${percentage}% (${score}/${total})`;
+      document.getElementById("feedback-content").innerHTML = feedbackHtml;
       document.getElementById("result-screen").style.display = "block";
     })
     .catch(err => {
@@ -342,6 +427,10 @@
       status.innerText = "Error sending results. Please try again.";
       btn.disabled = false;
     });
+  }
+
+  function goBackToGrammar() {
+    window.location.href = "index.html";
   }
 </script>
 
