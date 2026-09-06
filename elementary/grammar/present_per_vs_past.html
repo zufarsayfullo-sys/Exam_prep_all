@@ -70,11 +70,27 @@
       font-size: 0.95rem;
       width: 170px;
       text-align: center;
+      transition: background-color 0.3s, border-color 0.3s;
     }
 
     input[type="text"]:focus {
       border-bottom-color: #005580;
       background-color: #f0f8ff;
+    }
+
+    /* Input Validation States */
+    input[type="text"].correct {
+      border-bottom: 2px solid #2b8a3e !important;
+      background-color: #e6fcf5 !important;
+      color: #2b8a3e;
+      font-weight: bold;
+    }
+
+    input[type="text"].incorrect {
+      border-bottom: 2px solid #c92a2a !important;
+      background-color: #fff5f5 !important;
+      color: #c92a2a;
+      font-weight: bold;
     }
 
     .form-group {
@@ -126,6 +142,14 @@
       text-align: center;
       font-weight: bold;
     }
+
+    .score-badge {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #0088cc;
+      margin: 12px 0;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -157,7 +181,8 @@
   <!-- STEP 3: COMPLETION SCREEN -->
   <div id="result-screen">
     <h2>Thank You!</h2>
-    <p>Your answers have been submitted successfully.</p>
+    <div id="score-display" class="score-badge"></div>
+    <p style="text-align: center;">Your answers have been submitted successfully.</p>
   </div>
 
 </div>
@@ -309,11 +334,17 @@
     const currentAnswers = versions[selectedVersion].answers;
 
     for (let i = 1; i <= total; i++) {
-      let inputVal = document.getElementById("q" + i).value.trim().toLowerCase();
+      const inputElem = document.getElementById("q" + i);
+      let inputVal = inputElem.value.trim().toLowerCase();
       inputVal = inputVal.replace(/[`’‘]/g, "'");
+
+      inputElem.disabled = true;
 
       if (currentAnswers["q" + i].includes(inputVal)) {
         score++;
+        inputElem.classList.add("correct");
+      } else {
+        inputElem.classList.add("incorrect");
       }
     }
 
@@ -332,14 +363,20 @@
       body: JSON.stringify(payload)
     })
     .then(() => {
-      document.getElementById("quiz-screen").style.display = "none";
-      document.getElementById("result-screen").style.display = "block";
+      setTimeout(() => {
+        document.getElementById("score-display").innerText = `Score: ${percentage}% (${score}/${total})`;
+        document.getElementById("quiz-screen").style.display = "none";
+        document.getElementById("result-screen").style.display = "block";
+      }, 1200);
     })
     .catch(err => {
       console.error(err);
       status.style.color = "red";
       status.innerText = "Error sending results. Please try again.";
       btn.disabled = false;
+      for (let i = 1; i <= total; i++) {
+        document.getElementById("q" + i).disabled = false;
+      }
     });
   }
 </script>
