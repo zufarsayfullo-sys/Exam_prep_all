@@ -28,7 +28,7 @@
   </div>
 
   <script>
-    const SCRIPT_URL = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbziYaus_lYw_yK7ju04NPgSaAV2viKzW9kFbXucI2hiRgJSs4tjuGaJhJa7Eh8x35U/exec";
     const TASK_NAME = "Vocab Quiz 4: Weather Words";
 
     const questionPool = [
@@ -130,11 +130,12 @@
 
       const payload = new URLSearchParams();
       payload.append("name", name);
-      payload.append("percentage", percentage);
+      payload.append("score", percentage + "%");
       payload.append("taskName", TASK_NAME);
       payload.append("mistakes", mistakesString);
 
       document.getElementById("submitBtn").disabled = true;
+      document.getElementById("submitBtn").innerText = "Submitting...";
 
       fetch(SCRIPT_URL, {
         method: "POST",
