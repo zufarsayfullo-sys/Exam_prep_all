@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vocabulary Assessment Module</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f6f9; padding: 20px; text-align: center; }
+    .card { background: white; padding: 25px; max-width: 600px; margin: 0 auto; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    input { width: 80%; padding: 12px; font-size: 16px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 6px; }
+    .quiz-grid { display: flex; flex-direction: column; gap: 12px; }
+    .quiz-btn { padding: 15px; font-size: 16px; font-weight: bold; color: white; background: #007bff; border: none; border-radius: 6px; cursor: pointer; text-decoration: none; text-align: center; }
+    .quiz-btn:hover { background: #0056b3; }
+    .disabled { background: #ccc; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Vocabulary Practice Portal</h2>
+    <p>Please enter your full name to start:</p>
+    <input type="text" id="studentName" placeholder="Enter full name..." oninput="saveName()">
+    
+    <div class="quiz-grid">
+      <a id="q1" class="quiz-btn disabled" onclick="goToQuiz('quiz1.html')">Quiz 1: Confused Verbs</a>
+      <a id="q2" class="quiz-btn disabled" onclick="goToQuiz('quiz2.html')">Quiz 2: Get, Take, Have</a>
+      <a id="q3" class="quiz-btn disabled" onclick="goToQuiz('quiz3.html')">Quiz 3: Numbers in Words</a>
+      <a id="q4" class="quiz-btn disabled" onclick="goToQuiz('quiz4.html')">Quiz 4: Weather Words</a>
+      <a id="q5" class="quiz-btn disabled" onclick="goToQuiz('quiz5.html')">Quiz 5: Past Participles</a>
+      <a id="q6" class="quiz-btn disabled" onclick="goToQuiz('quiz6.html')">Quiz 6: Phone Phrases</a>
+    </div>
+  </div>
+
+  <script>
+    function saveName() {
+      const name = document.getElementById("studentName").value.trim();
+      localStorage.setItem("currentStudentName", name);
+      const buttons = document.querySelectorAll(".quiz-btn");
+      buttons.forEach(btn => {
+        if (name.length > 2) {
+          btn.classList.remove("disabled");
+        } else {
+          btn.classList.add("disabled");
+        }
+      });
+    }
+
+    function goToQuiz(url) {
+      const name = localStorage.getItem("currentStudentName");
+      if (name && name.length > 2) {
+        window.location.href = url;
+      } else {
+        alert("Please enter your name first!");
+      }
+    }
+
+    window.onload = function() {
+      const saved = localStorage.getItem("currentStudentName");
+      if (saved) {
+        document.getElementById("studentName").value = saved;
+        saveName();
+      }
+    };
+  </script>
+</body>
+</html>
